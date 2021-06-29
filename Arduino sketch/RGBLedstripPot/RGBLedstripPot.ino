@@ -11,6 +11,9 @@
 #define brightnessPot A0
 #define huePot A1
 
+#define EX 0
+#define NORM 1
+#define ANIM 2
 
 #define Button0 4
 #define Button1 5
@@ -73,38 +76,90 @@ void setup() {
   Serial.println("boot succesfull");
 }
 
-int mode = 0;
-void loop() {
+int mode = EX;
+void _update(void){
   //digitalWrite(LED_BUILTIN, HIGH);
   curButton0Val = Button0Pressed();
   curButton1Val = Button1Pressed();
   curButton2Val = Button2Pressed();
 
   if (curButton0Val && !curButton1Val && !curButton2Val) {
-    //    Serial.print("brightness: ");
-    //    Serial.print(brightness);
-    //    Serial.print("   hue: ");
-    //    Serial.println(hue);
-
     getColorInfo(0);
-    strip.setBrightness(brightness);
-    strip.fill(strip.Color(r, g, b, w));
-    strip.show();
-    prevButton0Val = curButton0Val;
   }
-
   if (!curButton0Val && curButton1Val && !curButton2Val) {
     getColorInfo(1);
-    strip.setBrightness(brightness);
-    strip.fill(strip.Color(r, g, b, w));
-    strip.show();
   }
-
   if (!curButton0Val && !curButton1Val && curButton2Val) {
     getColorInfo(2);
-    strip.setBrightness(brightness);
-    strip.fill(strip.Color(r, g, b, w));
-    strip.show();
+  }
+  static int runcount0 = 0;
+  static int runcount1 = 0;
+
+  if (curButton0Val && curButton1Val && !curButton2Val) { //if button 0 and 1
+    if (runcount0 == 0) {
+      if (mode == EX) {
+        mode = NORM;
+      } else {
+        mode = EX;
+      }
+      runcount0++;
+    }
+  } else {
+    runcount0 = 0;
+  }
+
+  if (!curButton0Val && curButton1Val && curButton2Val) { //if button 1 and 2
+    if (runcount1 == 0) {
+      if (mode == NORM) {
+        mode = ANIM;
+      } else {
+        mode = NORM;
+      }
+      runcount1++;
+    }
+  } else {
+      runcount1 = 0;
+    }  
+    
+}
+
+
+void loop() {
+_update();
+
+  switch (mode) {
+    case EX:
+      strip.setBrightness(brightness);
+      LEDstripExcluded(12, 41, strip.Color(r, g, b, w), strip.Color(0, 0, 0, 0));
+      strip.show();
+      break;
+
+    case NORM:
+      strip.setBrightness(brightness);
+      strip.fill(strip.Color(r, g, b, w));
+      strip.show();
+      break;
+
+    case ANIM:
+      strip.clear();
+      recursiveFlow(10, strip.Color(r, g, b, w), 10);
+      break;
+  }
+
+}
+
+void LEDstripExcluded(int exStart, int exEnd, uint32_t _color, uint32_t exColor) {
+  //Exclude all leds specified
+  for (int i = 0; i < exStart; i++) {
+    strip.setPixelColor(i, _color);
+  }
+
+  for (int i = exStart; i < exEnd; i++) {
+    strip.setPixelColor(i, exColor);
+  }
+
+  for (int i = exEnd; i < LED_COUNT; i++) {
+    strip.setPixelColor(i, _color);
   }
 
 }
@@ -209,9 +264,6 @@ void rainbowHue() {
 
 
 void recursiveFlowHue(int colorLength, int delayy, int hueSpeedPMS) {
-
-
-
   for (int i = 0; i < strip.numPixels() + colorLength; i++) {
 
 
@@ -242,11 +294,8 @@ void recursiveFlowHue(int colorLength, int delayy, int hueSpeedPMS) {
 }
 
 void recursiveFlow(int colorLength, uint32_t color, int delayy) {
-
-
-  for (int i = 0; i < strip.numPixels() + colorLength; i++) {
-
-
+  for (int i = 0; i < strip.numPixels() + colorLength; i++) {//forward
+_update();
     if (i <= strip.numPixels())
       strip.setPixelColor(i, color);
 
@@ -257,9 +306,8 @@ void recursiveFlow(int colorLength, uint32_t color, int delayy) {
     delay(delayy);
   }
 
-  for (int i = strip.numPixels(); i >= 0 - colorLength; i--) {
-
-
+  for (int i = strip.numPixels(); i >= 0 - colorLength; i--) {//backwards
+_update();
     if (i >= 0)
       strip.setPixelColor(i, color);
 
@@ -363,6 +411,7 @@ void pulseWhite(uint8_t wait) {
     delay(wait);
   }
 }
+
 void pulseRed(uint8_t wait) {
   int g = 0;
   int b = 0;
