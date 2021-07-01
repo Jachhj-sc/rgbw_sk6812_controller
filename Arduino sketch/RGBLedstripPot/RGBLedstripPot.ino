@@ -5,6 +5,9 @@
 //test
 #include <Adafruit_NeoPixel.h>
 #include <Wire.h>
+//#include <delay.h>
+
+
 #define LED_PIN     3
 #define LED_COUNT   182
 #define BRIGHTNESS  255
@@ -33,7 +36,7 @@ int r = 110;
 int g = 100;
 int b = 80;
 int w = 80;
-
+int receiveMode = 0; // 0, rgb receive mode 1, animation mode receive.
 
 int o = 0;
 int m = 0;
@@ -69,15 +72,19 @@ void setup() {
   strip.setBrightness(BRIGHTNESS); // Set BRIGHTNESS to about 1/5 (max = 255)
   // Serial.begin(115200);
 
+  //init ledstrip
   strip.fill(strip.Color(r, g, b, w));
   strip.show();
   strip.clear();
-  Serial.begin(19200);
+  Serial.begin(9600);
+  while (!Serial); //wait for serial to initialise
   Serial.println("boot succesfull");
+
+
 }
 
 int mode = EX;
-void _update(void){
+void _update(void) {
   //digitalWrite(LED_BUILTIN, HIGH);
   curButton0Val = Button0Pressed();
   curButton1Val = Button1Pressed();
@@ -118,15 +125,52 @@ void _update(void){
       runcount1++;
     }
   } else {
-      runcount1 = 0;
-    }  
-    
+    runcount1 = 0;
+  }
+
 }
 
+void checkSerial() {
+  byte byteIn = 0;
+  char input[25] = "";
+
+  if (Serial.available() > 0) {
+ // Serial.readBytesUntil('\n', input, 24);//get serial input
+  
+  
+    byteIn = Serial.read();
+    switch (byteIn) {
+      case 'c':
+        r = Serial.parseInt(SKIP_ALL, '\n');
+        g = Serial.parseInt(SKIP_ALL, '\n');
+        b = Serial.parseInt(SKIP_ALL, '\n');
+        w = Serial.parseInt(SKIP_ALL, '\n');
+
+        Serial.print(r);
+        Serial.print(",");
+        Serial.print(g);
+        Serial.print(",");
+        Serial.print(b);
+        Serial.print(",");        
+        Serial.println(w);
+        break;
+
+      default:
+        Serial.println("Error");
+        break;
+    }
+
+  
+  }  
+  while (Serial.available() > 0) {
+      Serial.read();
+    }
+}
 
 void loop() {
-_update();
+  _update();
 
+  checkSerial();
   switch (mode) {
     case EX:
       strip.setBrightness(brightness);
@@ -295,7 +339,7 @@ void recursiveFlowHue(int colorLength, int delayy, int hueSpeedPMS) {
 
 void recursiveFlow(int colorLength, uint32_t color, int delayy) {
   for (int i = 0; i < strip.numPixels() + colorLength; i++) {//forward
-_update();
+    _update();
     if (i <= strip.numPixels())
       strip.setPixelColor(i, color);
 
@@ -307,7 +351,7 @@ _update();
   }
 
   for (int i = strip.numPixels(); i >= 0 - colorLength; i--) {//backwards
-_update();
+    _update();
     if (i >= 0)
       strip.setPixelColor(i, color);
 
