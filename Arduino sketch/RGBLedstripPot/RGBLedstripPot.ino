@@ -68,7 +68,7 @@ uint32_t reading = 0;
 Adafruit_NeoPixel strip(LED_COUNT, LED_PIN, NEO_GRBW + NEO_KHZ800);
 
 void serialEvent() { //serial interrupt
-  delay(100);
+  delay(200);
   while (Serial.available()) {
     // get the new byte:
     char inChar = (char)Serial.read();
@@ -80,7 +80,7 @@ void serialEvent() { //serial interrupt
       stringComplete = true;
     }
   }
-  //Serial.println(inputString);
+  //S0erial.println(inputString);
 }
 
 
@@ -116,7 +116,7 @@ void setup() {
 int mode = EX;
 int countUpdate = 0;
 void loop() {
-  if (countUpdate++ >= 100) {
+  if (countUpdate++ >= 10) {
     _update();
     countUpdate = 0;
   }
@@ -244,14 +244,14 @@ void checkSerial() {
           }
           res = 0;
         }
-//        Serial.print("    ,");
-//        Serial.print(r);
-//        Serial.print(",");
-//        Serial.print(g);
-//        Serial.print(",");
-//        Serial.print(b);
-//        Serial.print(",");
-//        Serial.println(w);
+        Serial.print("rgb:>");
+        Serial.print(r);
+        Serial.print(",");
+        Serial.print(g);
+        Serial.print(",");
+        Serial.print(b);
+        Serial.print(",");
+        Serial.println(w);
 //
 //        Serial.print(cLoc[0]);
 //        Serial.print(",");
