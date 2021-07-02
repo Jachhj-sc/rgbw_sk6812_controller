@@ -80,7 +80,7 @@ void serialEvent() { //serial interrupt
       stringComplete = true;
     }
   }
-  Serial.println(inputString);
+  //Serial.println(inputString);
 }
 
 
@@ -107,8 +107,8 @@ void setup() {
   strip.show();
   strip.clear();
   Serial.begin(9600);
-  while (!Serial); //wait for serial to initialise
-  Serial.println("boot succesfull");
+  //while (!Serial); //wait for serial to initialise
+  //Serial.println("boot succesfull");
   inputString.reserve(200);
 
 }
@@ -209,7 +209,7 @@ void checkSerial() {
 
     switch (inputString[0]) {
       case 'c':
-        Serial.println("c reached");
+        //Serial.println("c reached");
         //map the comma locations for formar c,255,255,255,255,
         for (int i = 0; i < 5; i++) {
           while (inputString[++count] != ',');
@@ -222,37 +222,47 @@ void checkSerial() {
             cbuff[0] = inputString[i];
             cbuff[1] = '\0';
             
-            buff[i-cLoc[num]+1] = atoi(cbuff);
+            buff[(i-cLoc[num])+1] = atoi(cbuff);
             //inputString[i]
-            Serial.print(buff[i-cLoc[num]+1], DEC);
+            //Serial.print(buff[i-cLoc[num]+1], DEC);
             
             res *= 10;
-            res += (byte)inputString[i];
-            cbuff = "";
+            res += (byte)buff[i-cLoc[num]+1];
+      
           }
-          if (num == 0);
+          if (num == 0){
           r = res;
-
-          if (num == 1);
+          }
+          if (num == 1){
           g = res;
-
-          if (num == 2);
+          }
+          if (num == 2){
           b = res;
-
-          if (num == 3);
+          }
+          if (num == 3){
           w = res;
-
+          }
           res = 0;
         }
-        Serial.print("    ,");
-        Serial.print(r);
-        Serial.print(",");
-        Serial.print(g);
-        Serial.print(",");
-        Serial.print(b);
-        Serial.print(",");
-        Serial.println(w);
-
+//        Serial.print("    ,");
+//        Serial.print(r);
+//        Serial.print(",");
+//        Serial.print(g);
+//        Serial.print(",");
+//        Serial.print(b);
+//        Serial.print(",");
+//        Serial.println(w);
+//
+//        Serial.print(cLoc[0]);
+//        Serial.print(",");
+//        Serial.print(cLoc[1]);
+//        Serial.print(",");
+//        Serial.print(cLoc[2]);
+//        Serial.print(",");
+//        Serial.print(cLoc[3]);
+//        Serial.print(",");
+//        Serial.println(cLoc[4]);
+        
         break;
 
       default:
