@@ -1,3 +1,4 @@
+
 // NeoPixel test program showing use of the WHITE channel for RGBW
 // pixels only (won't look correct on regular RGB NeoPixel strips).
 
@@ -6,7 +7,7 @@
 #include <Adafruit_NeoPixel.h>
 #include <Wire.h>
 //#include <delay.h>
-
+#include "queue.h"
 
 #define LED_PIN     3
 #define LED_COUNT   182
@@ -29,6 +30,9 @@ bool curButton0Val;
 bool curButton1Val;
 bool curButton2Val;
 
+String inputString = "";         // a String to hold incoming data
+bool stringComplete = false;  // whether the string is complete
+
 int varRes0;
 int varRes1;
 int aOld;
@@ -36,12 +40,21 @@ int r = 110;
 int g = 100;
 int b = 80;
 int w = 80;
+int brightness;
+
+int ro = 110;
+int go = 100;
+int bo = 80;
+int wo = 80;
+int brightnesso;
+
+
 int receiveMode = 0; // 0, rgb receive mode 1, animation mode receive.
 
 int o = 0;
 int m = 0;
 int timeVal;
-int brightness;
+
 int whiteness = 0;
 int prevWhiteness = 0;
 
@@ -53,6 +66,23 @@ uint32_t reading = 0;
 
 // Declare our NeoPixel strip object:
 Adafruit_NeoPixel strip(LED_COUNT, LED_PIN, NEO_GRBW + NEO_KHZ800);
+
+void serialEvent() { //serial interrupt
+  delay(100);
+  while (Serial.available()) {
+    // get the new byte:
+    char inChar = (char)Serial.read();
+    // add it to the inputString:
+    inputString += inChar;
+    // if the incoming character is a newline, set a flag so the main loop can
+    // do something about it:
+    if (inChar == '\n') {
+      stringComplete = true;
+    }
+  }
+  Serial.println(inputString);
+}
+
 
 void initPot() {
   pinMode(Button0, INPUT_PULLUP);
@@ -68,7 +98,7 @@ void setup() {
   //LED
   initPot();
   strip.begin();           // INITIALIZE NeoPixel strip object (REQUIRED)
-  strip.show();            // Turn OFF all pixels ASAP
+  strip.show();            // Turn OFF all pixels
   strip.setBrightness(BRIGHTNESS); // Set BRIGHTNESS to about 1/5 (max = 255)
   // Serial.begin(115200);
 
@@ -79,11 +109,49 @@ void setup() {
   Serial.begin(9600);
   while (!Serial); //wait for serial to initialise
   Serial.println("boot succesfull");
-
+  inputString.reserve(200);
 
 }
 
 int mode = EX;
+int countUpdate = 0;
+void loop() {
+  if (countUpdate++ >= 100) {
+    _update();
+    countUpdate = 0;
+  }
+  
+  checkSerial();
+  
+  if (ro != r || go != g || bo != b || wo != w || brightnesso != brightness) {//if one rgb or brightness value changed
+    switch (mode) {
+      case EX:
+        strip.setBrightness(brightness);
+        LEDstripExcluded(12, 41, strip.Color(r, g, b, w), strip.Color(0, 0, 0, 0));
+        strip.show();
+        break;
+
+      case NORM:
+        strip.setBrightness(brightness);
+        strip.fill(strip.Color(r, g, b, w));
+        strip.show();
+        break;
+
+      case ANIM:
+        strip.clear();
+        recursiveFlow(10, strip.Color(r, g, b, w), 10);
+        break;
+    }
+  }
+
+  ro = r;
+  go = g;
+  bo = b;
+  wo = w;
+
+}
+
+
 void _update(void) {
   //digitalWrite(LED_BUILTIN, HIGH);
   curButton0Val = Button0Pressed();
@@ -131,66 +199,74 @@ void _update(void) {
 }
 
 void checkSerial() {
-  byte byteIn = 0;
-  char input[25] = "";
+  char cbuff[2] = "";
+  byte buff[3];
+  int count = -1;
+  byte res = 0;
+  byte cLoc[5];
 
-  if (Serial.available() > 0) {
- // Serial.readBytesUntil('\n', input, 24);//get serial input
-  
-  
-    byteIn = Serial.read();
-    switch (byteIn) {
+  if (stringComplete) {
+
+    switch (inputString[0]) {
       case 'c':
-        r = Serial.parseInt(SKIP_ALL, '\n');
-        g = Serial.parseInt(SKIP_ALL, '\n');
-        b = Serial.parseInt(SKIP_ALL, '\n');
-        w = Serial.parseInt(SKIP_ALL, '\n');
+        Serial.println("c reached");
+        //map the comma locations for formar c,255,255,255,255,
+        for (int i = 0; i < 5; i++) {
+          while (inputString[++count] != ',');
+          cLoc[i] = count;
+        }
 
+        //convert from ascii to int for every number between the locations
+        for (int num = 0; num < 4; num++) {
+          for (int i = cLoc[num]+1; i < cLoc[num + 1]; i++) {
+            cbuff[0] = inputString[i];
+            cbuff[1] = '\0';
+            
+            buff[i-cLoc[num]+1] = atoi(cbuff);
+            //inputString[i]
+            Serial.print(buff[i-cLoc[num]+1], DEC);
+            
+            res *= 10;
+            res += (byte)inputString[i];
+            cbuff = "";
+          }
+          if (num == 0);
+          r = res;
+
+          if (num == 1);
+          g = res;
+
+          if (num == 2);
+          b = res;
+
+          if (num == 3);
+          w = res;
+
+          res = 0;
+        }
+        Serial.print("    ,");
         Serial.print(r);
         Serial.print(",");
         Serial.print(g);
         Serial.print(",");
         Serial.print(b);
-        Serial.print(",");        
+        Serial.print(",");
         Serial.println(w);
+
         break;
 
       default:
-        Serial.println("Error");
+
+        Serial.println("  Error");
         break;
     }
-
-  
-  }  
-  while (Serial.available() > 0) {
-      Serial.read();
-    }
-}
-
-void loop() {
-  _update();
-
-  checkSerial();
-  switch (mode) {
-    case EX:
-      strip.setBrightness(brightness);
-      LEDstripExcluded(12, 41, strip.Color(r, g, b, w), strip.Color(0, 0, 0, 0));
-      strip.show();
-      break;
-
-    case NORM:
-      strip.setBrightness(brightness);
-      strip.fill(strip.Color(r, g, b, w));
-      strip.show();
-      break;
-
-    case ANIM:
-      strip.clear();
-      recursiveFlow(10, strip.Color(r, g, b, w), 10);
-      break;
+    inputString = "";
+    stringComplete = 0;
   }
 
 }
+
+
 
 void LEDstripExcluded(int exStart, int exEnd, uint32_t _color, uint32_t exColor) {
   //Exclude all leds specified
