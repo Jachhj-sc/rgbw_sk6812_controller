@@ -34,14 +34,16 @@ LINKER_SCRIPT_DEP:=
 # Every subdirectory with source files must be described here
 SUBDIRS :=  \
 ../knobs \
-../math_map
+../math_map \
+../usart
 
 
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS +=  \
 ../knobs/knobs.c \
 ../main.c \
-../math_map/math_map.c
+../math_map/math_map.c \
+../usart/usart.c
 
 
 PREPROCESSING_SRCS += 
@@ -53,22 +55,26 @@ ASM_SRCS +=
 OBJS +=  \
 knobs/knobs.o \
 main.o \
-math_map/math_map.o
+math_map/math_map.o \
+usart/usart.o
 
 OBJS_AS_ARGS +=  \
 knobs/knobs.o \
 main.o \
-math_map/math_map.o
+math_map/math_map.o \
+usart/usart.o
 
 C_DEPS +=  \
 knobs/knobs.d \
 main.d \
-math_map/math_map.d
+math_map/math_map.d \
+usart/usart.d
 
 C_DEPS_AS_ARGS +=  \
 knobs/knobs.d \
 main.d \
-math_map/math_map.d
+math_map/math_map.d \
+usart/usart.d
 
 OUTPUT_FILE_PATH +=RoomAutomation.elf
 
@@ -99,6 +105,13 @@ knobs/knobs.o: ../knobs/knobs.c
 	
 
 math_map/math_map.o: ../math_map/math_map.c
+	@echo Building file: $<
+	@echo Invoking: AVR/GNU C Compiler : 5.4.0
+	$(QUOTE)C:\Program Files (x86)\Atmel\Studio\7.0\toolchain\avr8\avr8-gnu-toolchain\bin\avr-gcc.exe$(QUOTE)  -x c -funsigned-char -funsigned-bitfields -DDEBUG  -I"C:\Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.6.364\include"  -Og -ffunction-sections -fdata-sections -fpack-struct -fshort-enums -g2 -Wall -mmcu=atmega328p -B "C:\Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.6.364\gcc\dev\atmega328p" -c -std=gnu99 -MD -MP -MF "$(@:%.o=%.d)" -MT"$(@:%.o=%.d)" -MT"$(@:%.o=%.o)"   -o "$@" "$<" 
+	@echo Finished building: $<
+	
+
+usart/usart.o: ../usart/usart.c
 	@echo Building file: $<
 	@echo Invoking: AVR/GNU C Compiler : 5.4.0
 	$(QUOTE)C:\Program Files (x86)\Atmel\Studio\7.0\toolchain\avr8\avr8-gnu-toolchain\bin\avr-gcc.exe$(QUOTE)  -x c -funsigned-char -funsigned-bitfields -DDEBUG  -I"C:\Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.6.364\include"  -Og -ffunction-sections -fdata-sections -fpack-struct -fshort-enums -g2 -Wall -mmcu=atmega328p -B "C:\Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.6.364\gcc\dev\atmega328p" -c -std=gnu99 -MD -MP -MF "$(@:%.o=%.d)" -MT"$(@:%.o=%.d)" -MT"$(@:%.o=%.o)"   -o "$@" "$<" 

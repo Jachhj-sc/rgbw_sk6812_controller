@@ -20,7 +20,7 @@ void knobs_init(void){
 
 	ADMUX |= (1<<REFS0);//set reference voltage to Vcc
 	ADCSRA |= (1<<ADEN) | (1<<ADSC) | (1<<ADATE) | (1<<ADPS2) | (1<<ADPS1) | (1<<ADPS0);
-	ADCSRB |= (1<<ADTS1);//set AD auto trigger mode to Ext Interrupt
+	ADCSRB |= (1<<ADTS1);//set ADC auto trigger mode to Ext Interrupt
 	
 }
 
