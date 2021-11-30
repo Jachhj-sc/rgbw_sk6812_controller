@@ -35,6 +35,7 @@ LINKER_SCRIPT_DEP:=
 SUBDIRS :=  \
 ../knobs \
 ../math_map \
+../neopixel \
 ../usart
 
 

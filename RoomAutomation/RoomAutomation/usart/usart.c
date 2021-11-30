@@ -26,7 +26,7 @@ char usart_RxChar()									/* Data receiving function */
 	return(UDR0);									/* Get and return received data */
 }
 
-void usart_TxChar(unsigned char data)						/* Data transmitting function */
+void usart_TxChar(char data)						/* Data transmitting function */
 {
 	while (!(UCSR0A & (1<<UDRE0)));					/* Wait until data transmit and buffer get empty */
 	UDR0 = data;										/* Write data to be transmitting in UDR */
@@ -44,7 +44,7 @@ void usart_TxChar(unsigned char data)						/* Data transmitting function */
 * - The array is terminated with ?\0?.
 */
 
-void usart_ReceiveString(unsigned char *str)
+void usart_ReceiveString(char *str)
 {
 	uint8_t t = 0;
 
@@ -53,7 +53,7 @@ void usart_ReceiveString(unsigned char *str)
 	str[t] = '\0';
 }
 
-void usart_ReceiveValue(uint8_t *hex)
+void usart_ReceiveFirstValue(char *hex)
 {
 	uint8_t t = 0;
 	uint8_t Buff[10];
@@ -78,22 +78,16 @@ void usart_SendValueToText(uint8_t val){
 	
 	int i = 0;
 	while(buff[i] != '\0'){
-		usart_TxChar((unsigned char)buff[i++]);
+		usart_TxChar((char)buff[i++]);
 	}
 	
 		
 }
 
-void usart_SendString(unsigned char *str)									/* Send string of USART data function */
+void usart_SendString(char *str)									/* Send string of USART data function */
 {
 	int i = 0;
 	while (str[i] != '\0'){
 		usart_TxChar(str[i++]);					/* Send each char of string till the NULL */
 	}
-}
-
-void usart_clearRxBuff(){
-	char x;
-	usart_TxChar(&x);	
-	
 }
