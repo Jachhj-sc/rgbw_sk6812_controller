@@ -34,6 +34,7 @@ TODO: implement delay with the build timer in timer.h in the function "effect_pu
 #include "ws2812_config.h" // config data for the led strip
 #include "ledcontrol/colors.h"
 #include "timer.h"
+#include "buttons/buttons.h"
 
 int randomrange(int lower, int upper);
 void recursiveFlowHue(int colorLength, int hueSpeedPMS);
@@ -64,11 +65,12 @@ uint32_t colors[20] = {
 int main(void)
 {
 	init_timer0();
-	
+	//setRGBW_ExBounds(0, 36);
 	//setRGBW_ExBounds(12,30);
-	setRGBW_Brightness(255);
-	setRGBW_clear();
-	RGBW_send();
+	//setRGBW_Brightness(255);
+	//setRGBW_clear();
+	//RGBW_send();
+	buttons_init();
 
 	//setRGBW_all(color32(255,255,0,0));
 	//RGBW_send();
@@ -80,7 +82,7 @@ int main(void)
 
 	while(1)
 	{
-
+	
 // 		RGBW_send();
 		
 // 		effect_snake_nb(5, color32(2,2,2,2));
@@ -88,12 +90,43 @@ int main(void)
 // 		effect_snake_nb(pixelcount-5, gamma32(ColorHSV(hue+=550 , 255, 255, 155)));
 // 		effect_snakeBounce_nb(10, color32(50,10,10,10));
 
+// 		if(/*buttonflag.button0*/ (PINC & ~(1<<PINC0)) == (1<<PINC0)){
+// 			setRGBW_all(color32(0,0,50,0));
+// 			buttonflag.button0 = 0;
+// 			
+// 		}else if(buttonflag.button1){
+// 			setRGBW_all(color32(50,0,0,0));
+// 			buttonflag.button1 = 0;
+// 			
+// 		}else if(buttonflag.button2){
+// 			setRGBW_all(color32(0,50,0,0));
+// 			buttonflag.button2 = 0;
+// 			
+// 		}else {
+// 			setRGBW_all(color32(0,0,0,50));
+// 		}
 
-
+// 	if ( !(PINC & (1<<0)) ){
+// 		buttonflag.button0 = 1;
+// 	}
+	
+	if (buttonflag.button0 == 1){
+		PORTB |= (1<<PINB5);
+		buttonflag.button0 = 0;
+	}else{
+		PORTB &= ~(1<<PINB5);
+	}
+		//setRGBW_all(color32(0,0,255,0));
 		
-		setRGBW_all(color32(50,50,50,255));
-		RGBW_send();
-				
+		//RGBW_send();
+		_delay_ms(50);
+// 		for(int i = 0; i < LEDpixelcount; i++){
+// 			if(i % 2 == 0){//if perfectly devisible by 2
+// 				setRGBW_pixel(i, color32(0,0,255,0));	
+// 				RGBW_send();
+// 			}		
+// 		}
+		
 //		recursiveFlowHue(10, 51);
 		//effect_pulse(0, 255, color32(0, 255, 255, 50))
 //		effect_pulse_nb(0, 255, color32(255, 255, 255, 255));

@@ -2,6 +2,8 @@
 # Automatically-generated file. Do not edit or delete the file
 ################################################################################
 
+buttons\buttons.c
+
 ledcontrol\ledcontrol.c
 
 timer.c

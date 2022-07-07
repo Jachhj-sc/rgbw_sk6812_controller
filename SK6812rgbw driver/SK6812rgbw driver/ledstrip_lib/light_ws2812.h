@@ -15,6 +15,7 @@
 
 #include <avr/io.h>
 #include <avr/interrupt.h>
+#include "../ws2812_config.h"
 
 ///////////////////////////////////////////////////////////////////////
 // Define Reset time in µs.
