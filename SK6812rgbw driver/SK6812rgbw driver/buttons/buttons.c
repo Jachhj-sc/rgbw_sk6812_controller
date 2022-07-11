@@ -8,7 +8,7 @@
 #include "buttons.h"
 #include <avr/interrupt.h>
 #include <stdint.h>
-#include <avr/delay.h>
+#include <util/delay.h>
 
 volatile sw_statusflag_t buttonflag = {0};
 
@@ -16,24 +16,25 @@ void buttons_init(void){
 //initialize buttons
 	DDRB |= (1<<PORTB5);
 	
-	DDRC &= ~(BUT0 | BUT1 | BUT2);
+	DDRC &= ~(BUT0_MASK | BUT1_MASK | BUT2_MASK);
 	//enable pullup
-	PORTC |= BUT0 | BUT1 | BUT2;
+	PORTC |= BUT0_MASK | BUT1_MASK | BUT2_MASK;
 	
 	//enable interrupt
-	PCICR |= PCIE1;
+	PCICR |= (1<<PCIE1);
+	
 	PCMSK1 |= (1<<PCINT8) | (1<<PCINT9) | (1<<PCINT10);
 }
 
 ISR(PCINT1_vect){//button interrupt, and set flag for button
 	 //check which button was pressed.
-	if(!((BUT0_PIN & BUT0) == BUT0)){
+	if(!((BUT0_PIN & BUT0_MASK) == BUT0_MASK)){
 		 buttonflag.button0 = 1;//if Button on PINC0 is pressed
 	}
-	if(!((BUT1_PIN & BUT1) == BUT1)){ 
+	if(!((BUT1_PIN & BUT1_MASK) == BUT1_MASK)){ 
 		buttonflag.button1 = 1;
 	}
-	if(!((BUT2_PIN & BUT2) == BUT2)){ 
+	if(!((BUT2_PIN & BUT2_MASK) == BUT2_MASK)){ 
 		buttonflag.button2 = 1;
 	}
 }

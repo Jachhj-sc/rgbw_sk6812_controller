@@ -46,27 +46,14 @@ Discarded input sections
  .bss           0x00000000        0x0 ledcontrol/ledcontrol.o
  .text.setRGBW_pixel
                 0x00000000      0x17e ledcontrol/ledcontrol.o
- .text.setRGBW_ExBounds
-                0x00000000       0x12 ledcontrol/ledcontrol.o
- .text.setRGBW_all
-                0x00000000      0x15a ledcontrol/ledcontrol.o
- .text.setRGBW_clear
-                0x00000000       0x1c ledcontrol/ledcontrol.o
- .text.setRGBW_Brightness
-                0x00000000        0x6 ledcontrol/ledcontrol.o
  .text.calcBrightness
                 0x00000000      0x10c ledcontrol/ledcontrol.o
- .text.RGBW_send
-                0x00000000        0xc ledcontrol/ledcontrol.o
  .text.ColorHSV
                 0x00000000      0x238 ledcontrol/ledcontrol.o
- .text.color32  0x00000000       0x24 ledcontrol/ledcontrol.o
  .text.effect_snakeGrow_nb
                 0x00000000      0x230 ledcontrol/ledcontrol.o
  .text.effect_snakeGrow_b
                 0x00000000      0x2ca ledcontrol/ledcontrol.o
- .text.effect_snake_nb
-                0x00000000      0x22a ledcontrol/ledcontrol.o
  .text.effect_snakeGrowHue_nb
                 0x00000000      0x178 ledcontrol/ledcontrol.o
  .text.effect_snakeGrowHue_b
@@ -94,38 +81,15 @@ Discarded input sections
  .bss.reverse.2084
                 0x00000000        0x1 ledcontrol/ledcontrol.o
  .bss.i.2083    0x00000000        0x2 ledcontrol/ledcontrol.o
- .bss.head.2061
-                0x00000000        0x2 ledcontrol/ledcontrol.o
- .bss.prevlen.2064
-                0x00000000        0x2 ledcontrol/ledcontrol.o
- .bss.tail.2062
-                0x00000000        0x2 ledcontrol/ledcontrol.o
- .bss.state.2063
-                0x00000000        0x1 ledcontrol/ledcontrol.o
  .bss.f.2044    0x00000000        0x2 ledcontrol/ledcontrol.o
  .data.len.2043
                 0x00000000        0x2 ledcontrol/ledcontrol.o
  .bss.hue.2038  0x00000000        0x2 ledcontrol/ledcontrol.o
  .bss.hue.2033  0x00000000        0x2 ledcontrol/ledcontrol.o
- .data.exHigh   0x00000000        0x2 ledcontrol/ledcontrol.o
- .data.exLow    0x00000000        0x2 ledcontrol/ledcontrol.o
- .data.brightness
-                0x00000000        0x1 ledcontrol/ledcontrol.o
  .progmem.data._NeoPixelGammaTable
                 0x00000000      0x100 ledcontrol/ledcontrol.o
  .progmem.data._NeoPixelSineTable
                 0x00000000      0x100 ledcontrol/ledcontrol.o
- .debug_info    0x00000000     0x1abe ledcontrol/ledcontrol.o
- .debug_abbrev  0x00000000      0x44b ledcontrol/ledcontrol.o
- .debug_loc     0x00000000     0x38c9 ledcontrol/ledcontrol.o
- .debug_aranges
-                0x00000000       0xd0 ledcontrol/ledcontrol.o
- .debug_ranges  0x00000000      0x548 ledcontrol/ledcontrol.o
- .debug_line    0x00000000      0xf3c ledcontrol/ledcontrol.o
- .debug_str     0x00000000      0x45a ledcontrol/ledcontrol.o
- .comment       0x00000000       0x31 ledcontrol/ledcontrol.o
- .debug_frame   0x00000000      0x600 ledcontrol/ledcontrol.o
- COMMON         0x00000000      0x2d4 ledcontrol/ledcontrol.o
  .text          0x00000000        0x0 timer.o
  .data          0x00000000        0x0 timer.o
  .bss           0x00000000        0x0 timer.o
@@ -138,40 +102,29 @@ Discarded input sections
                 0x00000000       0x5a ledstrip_lib/light_ws2812.o
  .text.ws2812_setleds_pin
                 0x00000000       0x62 ledstrip_lib/light_ws2812.o
- .text.ws2812_setleds_rgbw
-                0x00000000       0x58 ledstrip_lib/light_ws2812.o
  .text.ws2812_sendarray
                 0x00000000       0x44 ledstrip_lib/light_ws2812.o
  .text.ws2812_sendarray_mask
                 0x00000000       0x4c ledstrip_lib/light_ws2812.o
- .debug_info    0x00000000      0x523 ledstrip_lib/light_ws2812.o
- .debug_abbrev  0x00000000      0x15f ledstrip_lib/light_ws2812.o
- .debug_loc     0x00000000      0x73d ledstrip_lib/light_ws2812.o
- .debug_aranges
-                0x00000000       0x40 ledstrip_lib/light_ws2812.o
- .debug_ranges  0x00000000       0x30 ledstrip_lib/light_ws2812.o
- .debug_line    0x00000000      0x2c9 ledstrip_lib/light_ws2812.o
- .debug_str     0x00000000      0x283 ledstrip_lib/light_ws2812.o
- .comment       0x00000000       0x31 ledstrip_lib/light_ws2812.o
- .debug_frame   0x00000000       0x64 ledstrip_lib/light_ws2812.o
  .text          0x00000000        0x0 main.o
  .data          0x00000000        0x0 main.o
  .bss           0x00000000        0x0 main.o
+ .text.update   0x00000000       0x54 main.o
+ .text.state_act
+                0x00000000       0xa8 main.o
  .text.effect_scrollingHue
                 0x00000000        0x2 main.o
  .text.randomrange
                 0x00000000       0x44 main.o
  .text.recursiveFlowHue
                 0x00000000      0x170 main.o
- .bss.hue.1983  0x00000000        0x2 main.o
- .bss.seed.1977
+ .bss.hue.2040  0x00000000        0x2 main.o
+ .bss.seed.2034
                 0x00000000        0x2 main.o
  .data.colors   0x00000000       0x50 main.o
  .text          0x00000000        0x0 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr5\libgcc.a(_mulsi3.o)
  .data          0x00000000        0x0 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr5\libgcc.a(_mulsi3.o)
  .bss           0x00000000        0x0 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr5\libgcc.a(_mulsi3.o)
- .text.libgcc.mul
-                0x00000000       0x20 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr5\libgcc.a(_mulsi3.o)
  .text.libgcc.div
                 0x00000000        0x0 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr5\libgcc.a(_mulsi3.o)
  .text.libgcc   0x00000000        0x0 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr5\libgcc.a(_mulsi3.o)
@@ -204,8 +157,6 @@ Discarded input sections
  .bss           0x00000000        0x0 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr5\libgcc.a(_udivmodsi4.o)
  .text.libgcc.mul
                 0x00000000        0x0 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr5\libgcc.a(_udivmodsi4.o)
- .text.libgcc.div
-                0x00000000       0x44 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr5\libgcc.a(_udivmodsi4.o)
  .text.libgcc   0x00000000        0x0 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr5\libgcc.a(_udivmodsi4.o)
  .text.libgcc.prologue
                 0x00000000        0x0 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr5\libgcc.a(_udivmodsi4.o)
@@ -266,8 +217,6 @@ Discarded input sections
  .text          0x00000000        0x0 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr5\libgcc.a(_umulhisi3.o)
  .data          0x00000000        0x0 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr5\libgcc.a(_umulhisi3.o)
  .bss           0x00000000        0x0 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr5\libgcc.a(_umulhisi3.o)
- .text.libgcc.mul
-                0x00000000       0x1e c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr5\libgcc.a(_umulhisi3.o)
  .text.libgcc.div
                 0x00000000        0x0 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr5\libgcc.a(_umulhisi3.o)
  .text.libgcc   0x00000000        0x0 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr5\libgcc.a(_umulhisi3.o)
@@ -298,8 +247,6 @@ Discarded input sections
  .text          0x00000000        0x0 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr5\libgcc.a(_muluhisi3.o)
  .data          0x00000000        0x0 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr5\libgcc.a(_muluhisi3.o)
  .bss           0x00000000        0x0 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr5\libgcc.a(_muluhisi3.o)
- .text.libgcc.mul
-                0x00000000       0x16 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr5\libgcc.a(_muluhisi3.o)
  .text.libgcc.div
                 0x00000000        0x0 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr5\libgcc.a(_muluhisi3.o)
  .text.libgcc   0x00000000        0x0 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr5\libgcc.a(_muluhisi3.o)
@@ -512,7 +459,7 @@ END GROUP
 .rela.plt
  *(.rela.plt)
 
-.text           0x00000000      0x192
+.text           0x00000000      0x768
  *(.vectors)
  .vectors       0x00000000       0x68 C:/Program Files (x86)/Atmel/Studio/7.0/Packs/atmel/ATmega_DFP/1.6.364/gcc/dev/atmega328p/avr5/crtatmega328p.o
                 0x00000000                __vector_default
@@ -598,25 +545,60 @@ END GROUP
                 0x000000a6                . = ALIGN (0x2)
  *(.text.*)
  .text.buttons_init
-                0x000000a6       0x26 buttons/buttons.o
+                0x000000a6       0x24 buttons/buttons.o
                 0x000000a6                buttons_init
  .text.__vector_4
-                0x000000cc       0x36 buttons/buttons.o
-                0x000000cc                __vector_4
+                0x000000ca       0x36 buttons/buttons.o
+                0x000000ca                __vector_4
+ .text.setRGBW_ExBounds
+                0x00000100       0x12 ledcontrol/ledcontrol.o
+                0x00000100                setRGBW_ExBounds
+ .text.setRGBW_all
+                0x00000112      0x15a ledcontrol/ledcontrol.o
+                0x00000112                setRGBW_all
+ .text.setRGBW_clear
+                0x0000026c       0x1c ledcontrol/ledcontrol.o
+                0x0000026c                setRGBW_clear
+ .text.setRGBW_Brightness
+                0x00000288        0x6 ledcontrol/ledcontrol.o
+                0x00000288                setRGBW_Brightness
+ .text.RGBW_send
+                0x0000028e        0xc ledcontrol/ledcontrol.o
+                0x0000028e                RGBW_send
+ .text.color32  0x0000029a       0x24 ledcontrol/ledcontrol.o
+                0x0000029a                color32
+ .text.effect_snake_nb
+                0x000002be      0x22a ledcontrol/ledcontrol.o
+                0x000002be                effect_snake_nb
  .text.__vector_14
-                0x00000102       0x40 timer.o
-                0x00000102                __vector_14
+                0x000004e8       0x40 timer.o
+                0x000004e8                __vector_14
  .text.init_timer0
-                0x00000142       0x1c timer.o
-                0x00000142                init_timer0
+                0x00000528       0x1c timer.o
+                0x00000528                init_timer0
+ .text.ws2812_setleds_rgbw
+                0x00000544       0x58 ledstrip_lib/light_ws2812.o
+                0x00000544                ws2812_setleds_rgbw
  .text.startup.main
-                0x0000015e       0x30 main.o
-                0x0000015e                main
-                0x0000018e                . = ALIGN (0x2)
+                0x0000059c      0x130 main.o
+                0x0000059c                main
+ .text.libgcc.mul
+                0x000006cc       0x20 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr5\libgcc.a(_mulsi3.o)
+                0x000006cc                __mulsi3
+ .text.libgcc.div
+                0x000006ec       0x44 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr5\libgcc.a(_udivmodsi4.o)
+                0x000006ec                __udivmodsi4
+ .text.libgcc.mul
+                0x00000730       0x1e c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr5\libgcc.a(_umulhisi3.o)
+                0x00000730                __umulhisi3
+ .text.libgcc.mul
+                0x0000074e       0x16 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr5\libgcc.a(_muluhisi3.o)
+                0x0000074e                __muluhisi3
+                0x00000764                . = ALIGN (0x2)
  *(.fini9)
- .fini9         0x0000018e        0x0 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr5\libgcc.a(_exit.o)
-                0x0000018e                _exit
-                0x0000018e                exit
+ .fini9         0x00000764        0x0 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr5\libgcc.a(_exit.o)
+                0x00000764                _exit
+                0x00000764                exit
  *(.fini9)
  *(.fini8)
  *(.fini8)
@@ -635,41 +617,62 @@ END GROUP
  *(.fini1)
  *(.fini1)
  *(.fini0)
- .fini0         0x0000018e        0x4 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr5\libgcc.a(_exit.o)
+ .fini0         0x00000764        0x4 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr5\libgcc.a(_exit.o)
  *(.fini0)
-                0x00000192                _etext = .
+                0x00000768                _etext = .
 
-.data           0x00800100        0x0 load address 0x00000192
+.data           0x00800100        0x6 load address 0x00000768
                 0x00800100                PROVIDE (__data_start, .)
  *(.data)
  *(.data*)
+ .data.exHigh   0x00800100        0x2 ledcontrol/ledcontrol.o
+                0x00800100                exHigh
+ .data.exLow    0x00800102        0x2 ledcontrol/ledcontrol.o
+                0x00800102                exLow
+ .data.brightness
+                0x00800104        0x1 ledcontrol/ledcontrol.o
+                0x00800104                brightness
  *(.gnu.linkonce.d*)
  *(.rodata)
  *(.rodata*)
  *(.gnu.linkonce.r*)
-                0x00800100                . = ALIGN (0x2)
-                0x00800100                _edata = .
-                0x00800100                PROVIDE (__data_end, .)
+                0x00800106                . = ALIGN (0x2)
+ *fill*         0x00800105        0x1 
+                0x00800106                _edata = .
+                0x00800106                PROVIDE (__data_end, .)
 
-.bss            0x00800100        0x5
-                0x00800100                PROVIDE (__bss_start, .)
+.bss            0x00800106      0x2e9
+                0x00800106                PROVIDE (__bss_start, .)
  *(.bss)
  *(.bss*)
  .bss.buttonflag
-                0x00800100        0x3 buttons/buttons.o
-                0x00800100                buttonflag
- .bss.time_ms   0x00800103        0x2 timer.o
-                0x00800103                time_ms
+                0x00800106        0x3 buttons/buttons.o
+                0x00800106                buttonflag
+ .bss.head.2061
+                0x00800109        0x2 ledcontrol/ledcontrol.o
+ .bss.prevlen.2064
+                0x0080010b        0x2 ledcontrol/ledcontrol.o
+ .bss.tail.2062
+                0x0080010d        0x2 ledcontrol/ledcontrol.o
+ .bss.state.2063
+                0x0080010f        0x1 ledcontrol/ledcontrol.o
+ .bss.time_ms   0x00800110        0x2 timer.o
+                0x00800110                time_ms
+ .bss.systemstate_f
+                0x00800112        0x9 main.o
+                0x00800112                systemstate_f
  *(COMMON)
-                0x00800105                PROVIDE (__bss_end, .)
-                0x00000192                __data_load_start = LOADADDR (.data)
-                0x00000192                __data_load_end = (__data_load_start + SIZEOF (.data))
+ COMMON         0x0080011b      0x2d4 ledcontrol/ledcontrol.o
+                0x0080011b                led
+                0x008003ef                PROVIDE (__bss_end, .)
+                0x00000768                __data_load_start = LOADADDR (.data)
+                0x0000076e                __data_load_end = (__data_load_start + SIZEOF (.data))
 
-.noinit         0x00800105        0x0
+.noinit         0x008003ef        0x0
                 [!provide]                PROVIDE (__noinit_start, .)
  *(.noinit*)
                 [!provide]                PROVIDE (__noinit_end, .)
-                0x00800105                _end = .
+                0x008003ef                _end = .
                 [!provide]                PROVIDE (__heap_start, .)
 
 .eeprom         0x00810000        0x0
@@ -713,7 +716,9 @@ END GROUP
  *(.comment)
  .comment       0x00000000       0x30 buttons/buttons.o
                                  0x31 (size before relaxing)
+ .comment       0x00000030       0x31 ledcontrol/ledcontrol.o
  .comment       0x00000030       0x31 timer.o
+ .comment       0x00000030       0x31 ledstrip_lib/light_ws2812.o
  .comment       0x00000030       0x31 main.o
 
 .note.gnu.avr.deviceinfo
@@ -736,60 +741,78 @@ END GROUP
 .debug_sfnames
  *(.debug_sfnames)
 
-.debug_aranges  0x00000000       0x90
+.debug_aranges  0x00000000      0x1b0
  *(.debug_aranges)
  .debug_aranges
                 0x00000000       0x28 buttons/buttons.o
  .debug_aranges
-                0x00000028       0x30 timer.o
+                0x00000028       0xd0 ledcontrol/ledcontrol.o
  .debug_aranges
-                0x00000058       0x38 main.o
+                0x000000f8       0x30 timer.o
+ .debug_aranges
+                0x00000128       0x40 ledstrip_lib/light_ws2812.o
+ .debug_aranges
+                0x00000168       0x48 main.o
 
 .debug_pubnames
  *(.debug_pubnames)
 
-.debug_info     0x00000000      0xc64
+.debug_info     0x00000000     0x2faa
  *(.debug_info .gnu.linkonce.wi.*)
  .debug_info    0x00000000      0x5f4 C:/Program Files (x86)/Atmel/Studio/7.0/Packs/atmel/ATmega_DFP/1.6.364/gcc/dev/atmega328p/avr5/crtatmega328p.o
  .debug_info    0x000005f4       0xee buttons/buttons.o
- .debug_info    0x000006e2       0xd0 timer.o
- .debug_info    0x000007b2      0x4b2 main.o
+ .debug_info    0x000006e2     0x1abe ledcontrol/ledcontrol.o
+ .debug_info    0x000021a0       0xd0 timer.o
+ .debug_info    0x00002270      0x523 ledstrip_lib/light_ws2812.o
+ .debug_info    0x00002793      0x817 main.o
 
-.debug_abbrev   0x00000000      0x8df
+.debug_abbrev   0x00000000      0xf10
  *(.debug_abbrev)
  .debug_abbrev  0x00000000      0x5a2 C:/Program Files (x86)/Atmel/Studio/7.0/Packs/atmel/ATmega_DFP/1.6.364/gcc/dev/atmega328p/avr5/crtatmega328p.o
  .debug_abbrev  0x000005a2       0x9d buttons/buttons.o
- .debug_abbrev  0x0000063f       0x94 timer.o
- .debug_abbrev  0x000006d3      0x20c main.o
+ .debug_abbrev  0x0000063f      0x44b ledcontrol/ledcontrol.o
+ .debug_abbrev  0x00000a8a       0x94 timer.o
+ .debug_abbrev  0x00000b1e      0x15f ledstrip_lib/light_ws2812.o
+ .debug_abbrev  0x00000c7d      0x293 main.o
 
-.debug_line     0x00000000      0x595
+.debug_line     0x00000000     0x19b5
  *(.debug_line .debug_line.* .debug_line_end)
  .debug_line    0x00000000      0x134 C:/Program Files (x86)/Atmel/Studio/7.0/Packs/atmel/ATmega_DFP/1.6.364/gcc/dev/atmega328p/avr5/crtatmega328p.o
- .debug_line    0x00000134      0x10f buttons/buttons.o
- .debug_line    0x00000243       0xec timer.o
- .debug_line    0x0000032f      0x266 main.o
+ .debug_line    0x00000134      0x109 buttons/buttons.o
+ .debug_line    0x0000023d      0xf3c ledcontrol/ledcontrol.o
+ .debug_line    0x00001179       0xec timer.o
+ .debug_line    0x00001265      0x2c9 ledstrip_lib/light_ws2812.o
+ .debug_line    0x0000152e      0x487 main.o
 
-.debug_frame    0x00000000      0x154
+.debug_frame    0x00000000      0x7d8
  *(.debug_frame)
  .debug_frame   0x00000000       0x44 buttons/buttons.o
- .debug_frame   0x00000044       0x60 timer.o
- .debug_frame   0x000000a4       0xb0 main.o
+ .debug_frame   0x00000044      0x600 ledcontrol/ledcontrol.o
+ .debug_frame   0x00000644       0x60 timer.o
+ .debug_frame   0x000006a4       0x64 ledstrip_lib/light_ws2812.o
+ .debug_frame   0x00000708       0xd0 main.o
 
-.debug_str      0x00000000      0x4d1
+.debug_str      0x00000000      0x954
  *(.debug_str)
  .debug_str     0x00000000      0x208 C:/Program Files (x86)/Atmel/Studio/7.0/Packs/atmel/ATmega_DFP/1.6.364/gcc/dev/atmega328p/avr5/crtatmega328p.o
  .debug_str     0x00000208      0x192 buttons/buttons.o
                                 0x1c6 (size before relaxing)
- .debug_str     0x0000039a       0x3a timer.o
+ .debug_str     0x0000039a      0x2be ledcontrol/ledcontrol.o
+                                0x45a (size before relaxing)
+ .debug_str     0x00000658       0x25 timer.o
                                 0x1a8 (size before relaxing)
- .debug_str     0x000003d4       0xfd main.o
-                                0x2bd (size before relaxing)
+ .debug_str     0x0000067d       0xb9 ledstrip_lib/light_ws2812.o
+                                0x283 (size before relaxing)
+ .debug_str     0x00000736      0x21e main.o
+                                0x4b7 (size before relaxing)
 
-.debug_loc      0x00000000      0x3ef
+.debug_loc      0x00000000     0x466e
  *(.debug_loc)
  .debug_loc     0x00000000       0x3c buttons/buttons.o
- .debug_loc     0x0000003c       0x56 timer.o
- .debug_loc     0x00000092      0x35d main.o
+ .debug_loc     0x0000003c     0x38c9 ledcontrol/ledcontrol.o
+ .debug_loc     0x00003905       0x56 timer.o
+ .debug_loc     0x0000395b      0x73d ledstrip_lib/light_ws2812.o
+ .debug_loc     0x00004098      0x5d6 main.o
 
 .debug_macinfo
  *(.debug_macinfo)
@@ -809,11 +832,13 @@ END GROUP
 .debug_pubtypes
  *(.debug_pubtypes)
 
-.debug_ranges   0x00000000       0x60
+.debug_ranges   0x00000000      0x630
  *(.debug_ranges)
  .debug_ranges  0x00000000       0x18 buttons/buttons.o
- .debug_ranges  0x00000018       0x20 timer.o
- .debug_ranges  0x00000038       0x28 main.o
+ .debug_ranges  0x00000018      0x548 ledcontrol/ledcontrol.o
+ .debug_ranges  0x00000560       0x20 timer.o
+ .debug_ranges  0x00000580       0x30 ledstrip_lib/light_ws2812.o
+ .debug_ranges  0x000005b0       0x80 main.o
 
 .debug_macro
  *(.debug_macro)

@@ -62,14 +62,74 @@ uint32_t colors[20] = {
 	COLOR_PURPLE,     
 };
 
-int main(void)
+
+
+/************************************************************************/
+/* Control part setup													*/
+/************************************************************************/
+
+typedef enum
 {
+	S_INIT = 0,
+	S_ledOFF,
+	S_EQ_ON,
+	S_ALL_ON,
+	S_EFFECT_ON,
+	S_ledERR
+} state_e;
+
+typedef enum
+{
+	E_NO = 0,
+	E_BUTTONPRESSED,
+	E_ADCchange
+	
+} event_e;
+
+typedef enum
+{
+	EF_NO = 0			,
+	EF_effect_snake_nb	,
+	EF_ADCchange		,
+	EF_snake_nb			,
+	EF_snakeBounce_b    ,
+	EF_snakeBounce_nb   ,
+	EF_chase_b		    ,
+	EF_snakeGrowHue_b   ,
+	EF_snakeGrowHue_nb  ,
+	EF_snakeGrow_b	    ,
+	EF_snakeGrow_nb     ,
+	EF_pulse
+} effect_e;
+
+//flags and state variables
+typedef struct
+{
+	uint8_t strip_on;
+	effect_e current_ef;
+	uint32_t current_color32;
+	state_e currentstate;
+	state_e nextstate;
+	event_e currentevent;
+} sys_statusflags_t;
+
+sys_statusflags_t systemstate_f = {0};
+
+
+event_e update();
+state_e state_act(state_e state, event_e eventn);
+
+int main(void)
+{	
+	systemstate_f.currentstate = S_INIT;
+	systemstate_f.nextstate = S_ledOFF;
+	
 	init_timer0();
-	//setRGBW_ExBounds(0, 36);
+	setRGBW_ExBounds(0, 36);
 	//setRGBW_ExBounds(12,30);
-	//setRGBW_Brightness(255);
-	//setRGBW_clear();
-	//RGBW_send();
+	setRGBW_Brightness(255);
+	setRGBW_clear();
+	RGBW_send();
 	buttons_init();
 
 	//setRGBW_all(color32(255,255,0,0));
@@ -79,10 +139,24 @@ int main(void)
 	static  uint8_t  f   = 0;
 
 	sei();//enable interrupts
-
+	
 	while(1)
 	{
-	
+/************************************************************************/
+/* control part that needs to be integrated in real system later		*/
+/************************************************************************/
+		systemstate_f.current_color32 = color32(255,255,255,0);
+		
+		//state
+		systemstate_f.currentstate = systemstate_f.nextstate; //update currrentstate 
+		update();
+		systemstate_f.nextstate = state_act(systemstate_f.currentstate, systemstate_f.currentevent);//do actions
+		
+/************************************************************************/
+/* end of control														*/
+/************************************************************************/
+		
+	//debug purposes
 // 		RGBW_send();
 		
 // 		effect_snake_nb(5, color32(2,2,2,2));
@@ -90,36 +164,6 @@ int main(void)
 // 		effect_snake_nb(pixelcount-5, gamma32(ColorHSV(hue+=550 , 255, 255, 155)));
 // 		effect_snakeBounce_nb(10, color32(50,10,10,10));
 
-// 		if(/*buttonflag.button0*/ (PINC & ~(1<<PINC0)) == (1<<PINC0)){
-// 			setRGBW_all(color32(0,0,50,0));
-// 			buttonflag.button0 = 0;
-// 			
-// 		}else if(buttonflag.button1){
-// 			setRGBW_all(color32(50,0,0,0));
-// 			buttonflag.button1 = 0;
-// 			
-// 		}else if(buttonflag.button2){
-// 			setRGBW_all(color32(0,50,0,0));
-// 			buttonflag.button2 = 0;
-// 			
-// 		}else {
-// 			setRGBW_all(color32(0,0,0,50));
-// 		}
-
-// 	if ( !(PINC & (1<<0)) ){
-// 		buttonflag.button0 = 1;
-// 	}
-	
-	if (buttonflag.button0 == 1){
-		PORTB |= (1<<PINB5);
-		buttonflag.button0 = 0;
-	}else{
-		PORTB &= ~(1<<PINB5);
-	}
-		//setRGBW_all(color32(0,0,255,0));
-		
-		//RGBW_send();
-		_delay_ms(50);
 // 		for(int i = 0; i < LEDpixelcount; i++){
 // 			if(i % 2 == 0){//if perfectly devisible by 2
 // 				setRGBW_pixel(i, color32(0,0,255,0));	
@@ -132,6 +176,94 @@ int main(void)
 //		effect_pulse_nb(0, 255, color32(255, 255, 255, 255));
 	}	
 }
+
+
+
+
+/************************************************************************/
+/* control part that needs to be integrated in real system later		*/
+/************************************************************************/
+event_e update(){
+	if(buttonflag.button0){
+		systemstate_f.strip_on ^= 1;
+		buttonflag.button0 = 0;
+	}
+	if(buttonflag.button1){
+		systemstate_f.strip_on = 1;
+		systemstate_f.currentstate = S_EFFECT_ON;
+		systemstate_f.current_ef = EF_snake_nb;
+		
+		buttonflag.button1 = 0;
+	}
+	if(buttonflag.button2){
+		systemstate_f.strip_on = 1;
+		systemstate_f.currentstate = S_EFFECT_ON;
+		systemstate_f.current_ef = EF_NO;
+		buttonflag.button2 = 0;
+	}
+	
+}
+
+state_e state_act(state_e state, event_e eventn){
+	state_e nxtstate = 0;
+	
+	switch(state){
+	case S_ledOFF:
+		setRGBW_clear();
+		RGBW_send();
+		if (systemstate_f.strip_on) nxtstate = S_EFFECT_ON;
+		else nxtstate = S_ledOFF;
+		
+		break;
+		
+	case S_ALL_ON:
+		//deprecated		
+	break;
+		
+	case S_EQ_ON:
+	//eq code
+		nxtstate = S_EQ_ON;
+		break;
+		
+	case S_EFFECT_ON:
+	//effect code
+		switch (systemstate_f.current_ef){
+			
+			case EF_NO:
+				setRGBW_all(systemstate_f.current_color32);
+				RGBW_send();
+				break;
+				
+			case EF_snake_nb:
+				effect_snake_nb(10, systemstate_f.current_color32);
+				break;
+		}
+		nxtstate = S_EFFECT_ON;
+		break;
+	
+	case S_ledERR:
+	//effect code
+		setRGBW_all(color32(10,0,0,0));
+		RGBW_send();
+		nxtstate = S_ledERR;
+		break;
+	
+	default:
+	//error
+		nxtstate = S_ledERR;
+		break;
+	}
+	
+	if (!systemstate_f.strip_on) nxtstate = S_ledOFF;
+
+	return nxtstate;
+}
+
+/************************************************************************/
+/* end of control														*/
+/************************************************************************/
+
+
 
 void effect_scrollingHue(){
 	
