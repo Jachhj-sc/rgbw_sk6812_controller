@@ -89,17 +89,19 @@ typedef enum
 typedef enum
 {
 	EF_NO = 0			,
-	EF_effect_snake_nb	,
-	EF_ADCchange		,
 	EF_snake_nb			,
-	EF_snakeBounce_b    ,
 	EF_snakeBounce_nb   ,
+	EF_snakeGrowHue_nb  ,
+	EF_snakeGrow_nb     ,
+	EF_amountn,
+	
+	EF_pulse_b			,
+	EF_snakeBounce_b    ,
 	EF_chase_b		    ,
 	EF_snakeGrowHue_b   ,
-	EF_snakeGrowHue_nb  ,
 	EF_snakeGrow_b	    ,
-	EF_snakeGrow_nb     ,
-	EF_pulse
+	
+	
 } effect_e;
 
 //flags and state variables
@@ -135,18 +137,19 @@ int main(void)
 	//setRGBW_all(color32(255,255,0,0));
 	//RGBW_send();
 	uint16_t hue = 0;
-	static	uint8_t	 i	 = 0;
-	static  uint8_t  f   = 0;
+	static	uint8_t	 i = 0;
+	static  uint8_t  f = 0;
 
 	sei();//enable interrupts
+	
+	systemstate_f.current_color32 = color32(255, 255, 230, 100);
 	
 	while(1)
 	{
 /************************************************************************/
 /* control part that needs to be integrated in real system later		*/
 /************************************************************************/
-		systemstate_f.current_color32 = color32(255,255,255,0);
-		
+				
 		//state
 		systemstate_f.currentstate = systemstate_f.nextstate; //update currrentstate 
 		update();
@@ -185,27 +188,30 @@ int main(void)
 /************************************************************************/
 event_e update(){
 	if(buttonflag.button0){
-		systemstate_f.strip_on ^= 1;
+		systemstate_f.strip_on ^= 1;		
+		systemstate_f.currentstate = S_EFFECT_ON;
+		systemstate_f.current_ef = EF_NO;
 		buttonflag.button0 = 0;
 	}
 	if(buttonflag.button1){
 		systemstate_f.strip_on = 1;
 		systemstate_f.currentstate = S_EFFECT_ON;
-		systemstate_f.current_ef = EF_snake_nb;
+		
+		if(systemstate_f.current_ef < EF_amountn) systemstate_f.current_ef += 1;//go through the list of effects
+		else systemstate_f.current_ef = 0;
 		
 		buttonflag.button1 = 0;
 	}
 	if(buttonflag.button2){
-		systemstate_f.strip_on = 1;
-		systemstate_f.currentstate = S_EFFECT_ON;
-		systemstate_f.current_ef = EF_NO;
+
 		buttonflag.button2 = 0;
 	}
-	
 }
 
 state_e state_act(state_e state, event_e eventn){
 	state_e nxtstate = 0;
+	
+	if (!systemstate_f.strip_on) state = nxtstate = S_ledOFF;
 	
 	switch(state){
 	case S_ledOFF:
@@ -213,29 +219,59 @@ state_e state_act(state_e state, event_e eventn){
 		RGBW_send();
 		if (systemstate_f.strip_on) nxtstate = S_EFFECT_ON;
 		else nxtstate = S_ledOFF;
-		
 		break;
-		
-	case S_ALL_ON:
-		//deprecated		
-	break;
 		
 	case S_EQ_ON:
 	//eq code
 		nxtstate = S_EQ_ON;
 		break;
 		
-	case S_EFFECT_ON:
-	//effect code
+	case S_EFFECT_ON:	//effect types
 		switch (systemstate_f.current_ef){
-			
+/************************************************************************/
+/* add test code										                */
+/************************************************************************/		
 			case EF_NO:
 				setRGBW_all(systemstate_f.current_color32);
 				RGBW_send();
 				break;
-				
+/************************************************************************/
+/* end test code										                */
+/************************************************************************/
 			case EF_snake_nb:
 				effect_snake_nb(10, systemstate_f.current_color32);
+				break;
+
+			case EF_snakeBounce_b:
+				effect_snakeBounce_b(10, systemstate_f.current_color32);
+				break;
+			
+			case EF_snakeBounce_nb:
+				effect_snakeBounce_nb(10, systemstate_f.current_color32);
+				break;
+			
+			case EF_chase_b:
+				effect_chase_b(systemstate_f.current_color32);
+				break;
+			
+			case EF_snakeGrowHue_b:
+				effect_snakeGrowHue_b(5,5);
+				break;
+			
+			case EF_snakeGrowHue_nb:
+				effect_snakeGrowHue_nb(5,5);
+				break;
+			
+			case EF_snakeGrow_b:
+				effect_snakeGrow_b(10, systemstate_f.current_color32);
+				break;
+			
+			case EF_snakeGrow_nb:
+				effect_snakeGrow_nb(10, systemstate_f.current_color32);
+				break;
+			
+			case EF_pulse_b:
+				effect_pulse_b(10, 255, systemstate_f.current_color32);
 				break;
 		}
 		nxtstate = S_EFFECT_ON;
@@ -254,7 +290,7 @@ state_e state_act(state_e state, event_e eventn){
 		break;
 	}
 	
-	if (!systemstate_f.strip_on) nxtstate = S_ledOFF;
+
 
 	return nxtstate;
 }

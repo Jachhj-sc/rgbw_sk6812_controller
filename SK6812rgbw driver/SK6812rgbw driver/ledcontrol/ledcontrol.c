@@ -399,7 +399,7 @@ void effect_chase_b(uint32_t color){
 
 */
 
-void effect_pulse(int delay, int maxBrightness, uint32_t color){
+void effect_pulse_b(int delay, int maxBrightness, uint32_t color){
 
 	for(int i = 0; i < maxBrightness; i++){//ramp up loop
 		setRGBW_Brightness(i);

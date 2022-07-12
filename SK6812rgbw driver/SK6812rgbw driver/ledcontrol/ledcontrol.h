@@ -40,7 +40,7 @@ void effect_snakeGrowHue_nb(int growSpd, int hueSpd);
 void effect_snakeGrow_b(int growSpd, uint32_t color);
 void effect_snakeGrow_nb(int growSpd, uint32_t color);
 
-void effect_pulse(int delay, int maxBrightness, uint32_t color);
+void effect_pulse_b(int delay, int maxBrightness, uint32_t color);
 
  
  
