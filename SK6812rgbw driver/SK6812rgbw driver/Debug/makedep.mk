@@ -4,7 +4,11 @@
 
 buttons\buttons.c
 
+knob\knob.c
+
 ledcontrol\ledcontrol.c
+
+math_map\math_map.c
 
 timer.c
 

@@ -35,6 +35,8 @@ TODO: implement delay with the build timer in timer.h in the function "effect_pu
 #include "ledcontrol/colors.h"
 #include "timer.h"
 #include "buttons/buttons.h"
+#include "knob/knob.h"
+#include "math_map/math_map.h"
 
 int randomrange(int lower, int upper);
 void recursiveFlowHue(int colorLength, int hueSpeedPMS);
@@ -133,9 +135,11 @@ int main(void)
 	setRGBW_clear();
 	RGBW_send();
 	buttons_init();
-
+	knob_init();
+	
 	//setRGBW_all(color32(255,255,0,0));
 	//RGBW_send();
+	uint16_t knob_pos;
 	uint16_t hue = 0;
 	static	uint8_t	 i = 0;
 	static  uint8_t  f = 0;
@@ -149,6 +153,12 @@ int main(void)
 /************************************************************************/
 /* control part that needs to be integrated in real system later		*/
 /************************************************************************/
+		
+		//check adc need update later
+		knob_pos = knob_getPos(KNOB0_SHIFT);
+		//mapui(knob_pos, 0, 1024, 0 , 65535);
+		
+		systemstate_f.current_color32 = ColorHSV((uint16_t)knob_pos*64, 255, 255, 0);
 				
 		//state
 		systemstate_f.currentstate = systemstate_f.nextstate; //update currrentstate 
@@ -247,7 +257,7 @@ state_e state_act(state_e state, event_e eventn){
 				break;
 			
 			case EF_snakeBounce_nb:
-				effect_snakeBounce_nb(10, systemstate_f.current_color32);
+				effect_snakeBounce_nb(70, systemstate_f.current_color32);
 				break;
 			
 			case EF_chase_b:
@@ -259,7 +269,7 @@ state_e state_act(state_e state, event_e eventn){
 				break;
 			
 			case EF_snakeGrowHue_nb:
-				effect_snakeGrowHue_nb(5,5);
+				effect_snakeGrowHue_nb(5,50);
 				break;
 			
 			case EF_snakeGrow_b:

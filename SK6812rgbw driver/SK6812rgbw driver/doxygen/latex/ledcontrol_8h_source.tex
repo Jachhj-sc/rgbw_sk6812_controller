@@ -1,0 +1,54 @@
+\hypertarget{ledcontrol_8h_source}{}\doxysection{ledcontrol.\+h}
+\label{ledcontrol_8h_source}\index{ledcontrol/ledcontrol.h@{ledcontrol/ledcontrol.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{1 \textcolor{comment}{/*}}
+\DoxyCodeLine{2 \textcolor{comment}{ * ledcontrol.h}}
+\DoxyCodeLine{3 \textcolor{comment}{ *}}
+\DoxyCodeLine{4 \textcolor{comment}{ * Created: 13/07/2021 17:12:57}}
+\DoxyCodeLine{5 \textcolor{comment}{ *  Author: william}}
+\DoxyCodeLine{6 \textcolor{comment}{ */} }
+\DoxyCodeLine{7 }
+\DoxyCodeLine{8 }
+\DoxyCodeLine{9 \textcolor{preprocessor}{\#ifndef LEDCONTROL\_H\_}}
+\DoxyCodeLine{10 \textcolor{preprocessor}{\#define LEDCONTROL\_H\_}}
+\DoxyCodeLine{11 }
+\DoxyCodeLine{12 \textcolor{keywordtype}{void} setRGBW\_ExBounds(uint16\_t low, uint16\_t high);}
+\DoxyCodeLine{13 \textcolor{keywordtype}{void} setRGBW\_Brightness(uint8\_t bright);}
+\DoxyCodeLine{14 }
+\DoxyCodeLine{15 \textcolor{keywordtype}{void} setRGBW\_all(uint32\_t color);}
+\DoxyCodeLine{16 \textcolor{keywordtype}{void} setRGBW\_pixel(uint16\_t pixel, uint32\_t color);}
+\DoxyCodeLine{17 \textcolor{keywordtype}{void} setRGBW\_clear();}
+\DoxyCodeLine{18 }
+\DoxyCodeLine{19 \textcolor{keywordtype}{void} calcBrightness(uint32\_t *color, uint8\_t \_brightness);}
+\DoxyCodeLine{20 }
+\DoxyCodeLine{21 \textcolor{keywordtype}{void} RGBW\_send();}
+\DoxyCodeLine{22 }
+\DoxyCodeLine{23 uint32\_t ColorHSV(uint16\_t hue, uint8\_t sat, uint8\_t val, uint8\_t whiteness);}
+\DoxyCodeLine{24 uint32\_t color32(uint8\_t r, uint8\_t g, uint8\_t b, uint8\_t w);}
+\DoxyCodeLine{25 uint8\_t  gamma8(uint8\_t x);}
+\DoxyCodeLine{26 uint32\_t gamma32(uint32\_t x);}
+\DoxyCodeLine{27 uint8\_t  sine8(uint8\_t x);}
+\DoxyCodeLine{28 }
+\DoxyCodeLine{29 }
+\DoxyCodeLine{30 \textcolor{keywordtype}{void} effect\_snake\_nb(\textcolor{keywordtype}{int} length, uint32\_t color);}
+\DoxyCodeLine{31 }
+\DoxyCodeLine{32 \textcolor{keywordtype}{void} effect\_snakeBounce\_b(\textcolor{keywordtype}{int} length, uint32\_t color);}
+\DoxyCodeLine{33 \textcolor{keywordtype}{void} effect\_snakeBounce\_nb(\textcolor{keywordtype}{int} length, uint32\_t color);}
+\DoxyCodeLine{34 }
+\DoxyCodeLine{35 \textcolor{keywordtype}{void} effect\_chase\_b(uint32\_t color);}
+\DoxyCodeLine{36 }
+\DoxyCodeLine{37 \textcolor{keywordtype}{void} effect\_snakeGrowHue\_b(\textcolor{keywordtype}{int} growSpd, \textcolor{keywordtype}{int} hueSpd);}
+\DoxyCodeLine{38 \textcolor{keywordtype}{void} effect\_snakeGrowHue\_nb(\textcolor{keywordtype}{int} growSpd, \textcolor{keywordtype}{int} hueSpd);}
+\DoxyCodeLine{39 }
+\DoxyCodeLine{40 \textcolor{keywordtype}{void} effect\_snakeGrow\_b(\textcolor{keywordtype}{int} growSpd, uint32\_t color);}
+\DoxyCodeLine{41 \textcolor{keywordtype}{void} effect\_snakeGrow\_nb(\textcolor{keywordtype}{int} growSpd, uint32\_t color);}
+\DoxyCodeLine{42 }
+\DoxyCodeLine{43 \textcolor{keywordtype}{void} effect\_pulse\_b(\textcolor{keywordtype}{int} delay, \textcolor{keywordtype}{int} maxBrightness, uint32\_t color);}
+\DoxyCodeLine{44 }
+\DoxyCodeLine{45  }
+\DoxyCodeLine{46  }
+\DoxyCodeLine{47   }
+\DoxyCodeLine{48 \textcolor{preprocessor}{\#endif }\textcolor{comment}{/* LEDCONTROL\_H\_ */}\textcolor{preprocessor}{}}
+
+\end{DoxyCode}

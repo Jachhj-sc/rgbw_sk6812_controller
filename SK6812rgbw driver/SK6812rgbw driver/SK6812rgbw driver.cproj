@@ -155,6 +155,12 @@
     <Compile Include="buttons\buttons.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="knob\knob.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="knob\knob.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="ledcontrol\colors.h">
       <SubType>compile</SubType>
     </Compile>
@@ -162,6 +168,12 @@
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="ledcontrol\ledcontrol.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="math_map\math_map.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="math_map\math_map.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="timer.c">
@@ -187,6 +199,8 @@
     <Folder Include="ledstrip_lib" />
     <Folder Include="ledcontrol" />
     <Folder Include="buttons" />
+    <Folder Include="knob" />
+    <Folder Include="math_map" />
   </ItemGroup>
   <Import Project="$(AVRSTUDIO_EXE_PATH)\\Vs\\Compiler.targets" />
 </Project>

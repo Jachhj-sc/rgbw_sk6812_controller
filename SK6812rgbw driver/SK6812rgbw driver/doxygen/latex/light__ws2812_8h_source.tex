@@ -1,0 +1,100 @@
+\hypertarget{light__ws2812_8h_source}{}\doxysection{light\+\_\+ws2812.\+h}
+\label{light__ws2812_8h_source}\index{ledstrip\_lib/light\_ws2812.h@{ledstrip\_lib/light\_ws2812.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{1 \textcolor{comment}{/*}}
+\DoxyCodeLine{2 \textcolor{comment}{ * light weight WS2812 lib include}}
+\DoxyCodeLine{3 \textcolor{comment}{ *}}
+\DoxyCodeLine{4 \textcolor{comment}{ * Version 2.3  -\/ Nev 29th 2015}}
+\DoxyCodeLine{5 \textcolor{comment}{ * Author: Tim (cpldcpu@gmail.com) }}
+\DoxyCodeLine{6 \textcolor{comment}{ *}}
+\DoxyCodeLine{7 \textcolor{comment}{ * Please do not change this file! All configuration is handled in "{}ws2812\_config.h"{}}}
+\DoxyCodeLine{8 \textcolor{comment}{ *}}
+\DoxyCodeLine{9 \textcolor{comment}{ * License: GNU GPL v2+ (see License.txt)}}
+\DoxyCodeLine{10 \textcolor{comment}{ +}}
+\DoxyCodeLine{11 \textcolor{comment}{ */} }
+\DoxyCodeLine{12 }
+\DoxyCodeLine{13 \textcolor{preprocessor}{\#ifndef LIGHT\_WS2812\_H\_}}
+\DoxyCodeLine{14 \textcolor{preprocessor}{\#define LIGHT\_WS2812\_H\_}}
+\DoxyCodeLine{15 }
+\DoxyCodeLine{16 \textcolor{preprocessor}{\#include <avr/io.h>}}
+\DoxyCodeLine{17 \textcolor{preprocessor}{\#include <avr/interrupt.h>}}
+\DoxyCodeLine{18 \textcolor{preprocessor}{\#include "{}../ws2812\_config.h"{}}}
+\DoxyCodeLine{19 }
+\DoxyCodeLine{21 \textcolor{comment}{// Define Reset time in 탎.}}
+\DoxyCodeLine{22 \textcolor{comment}{//}}
+\DoxyCodeLine{23 \textcolor{comment}{// This is the time the library spends waiting after writing the data.}}
+\DoxyCodeLine{24 \textcolor{comment}{//}}
+\DoxyCodeLine{25 \textcolor{comment}{// WS2813 needs 300 탎 reset time}}
+\DoxyCodeLine{26 \textcolor{comment}{// WS2812 and clones only need 50 탎}}
+\DoxyCodeLine{27 \textcolor{comment}{//}}
+\DoxyCodeLine{29 \textcolor{comment}{}\textcolor{preprocessor}{\#if !defined(ws2812\_resettime)}}
+\DoxyCodeLine{30 \textcolor{preprocessor}{\#define ws2812\_resettime    300}}
+\DoxyCodeLine{31 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{32 }
+\DoxyCodeLine{34 \textcolor{comment}{// Define I/O pin}}
+\DoxyCodeLine{36 \textcolor{comment}{}\textcolor{preprocessor}{\#if !defined(ws2812\_port)}}
+\DoxyCodeLine{37 \textcolor{preprocessor}{\#define ws2812\_port B   }\textcolor{comment}{// Data port}}
+\DoxyCodeLine{38 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{39 }
+\DoxyCodeLine{40 \textcolor{preprocessor}{\#if !defined(ws2812\_pin)}}
+\DoxyCodeLine{41 \textcolor{preprocessor}{\#define ws2812\_pin  2   }\textcolor{comment}{// Data out pin}}
+\DoxyCodeLine{42 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{43 }
+\DoxyCodeLine{44 \textcolor{comment}{/*}}
+\DoxyCodeLine{45 \textcolor{comment}{ *  Structure of the LED array}}
+\DoxyCodeLine{46 \textcolor{comment}{ *}}
+\DoxyCodeLine{47 \textcolor{comment}{ * cRGB:     RGB  for WS2812S/B/C/D, SK6812, SK6812Mini, SK6812WWA, APA104, APA106}}
+\DoxyCodeLine{48 \textcolor{comment}{ * cRGBW:    RGBW for SK6812RGBW}}
+\DoxyCodeLine{49 \textcolor{comment}{ */}}
+\DoxyCodeLine{50 }
+\DoxyCodeLine{51 \textcolor{keyword}{struct }\mbox{\hyperlink{structc_r_g_b}{cRGB}}  \{ uint8\_t g; uint8\_t r; uint8\_t b; \};}
+\DoxyCodeLine{52 \textcolor{keyword}{struct }\mbox{\hyperlink{structc_r_g_b_w}{cRGBW}} \{ uint8\_t g; uint8\_t r; uint8\_t b; uint8\_t w;\};}
+\DoxyCodeLine{53 }
+\DoxyCodeLine{54 }
+\DoxyCodeLine{55 }
+\DoxyCodeLine{56 \textcolor{comment}{/* User Interface}}
+\DoxyCodeLine{57 \textcolor{comment}{ * }}
+\DoxyCodeLine{58 \textcolor{comment}{ * Input:}}
+\DoxyCodeLine{59 \textcolor{comment}{ *         ledarray:           An array of GRB data describing the LED colors}}
+\DoxyCodeLine{60 \textcolor{comment}{ *         number\_of\_leds:     The number of LEDs to write}}
+\DoxyCodeLine{61 \textcolor{comment}{ *         pinmask (optional): Bitmask describing the output bin. e.g. \_BV(PB0)}}
+\DoxyCodeLine{62 \textcolor{comment}{ *}}
+\DoxyCodeLine{63 \textcolor{comment}{ * The functions will perform the following actions:}}
+\DoxyCodeLine{64 \textcolor{comment}{ *         -\/ Set the data-\/out pin as output}}
+\DoxyCodeLine{65 \textcolor{comment}{ *         -\/ Send out the LED data }}
+\DoxyCodeLine{66 \textcolor{comment}{ *         -\/ Wait 50탎 to reset the LEDs}}
+\DoxyCodeLine{67 \textcolor{comment}{ */}}
+\DoxyCodeLine{68 }
+\DoxyCodeLine{69 \textcolor{keywordtype}{void} ws2812\_setleds     (\textcolor{keyword}{struct} \mbox{\hyperlink{structc_r_g_b}{cRGB}}  *ledarray, uint16\_t number\_of\_leds);}
+\DoxyCodeLine{70 \textcolor{keywordtype}{void} ws2812\_setleds\_pin (\textcolor{keyword}{struct} \mbox{\hyperlink{structc_r_g_b}{cRGB}}  *ledarray, uint16\_t number\_of\_leds,uint8\_t pinmask);}
+\DoxyCodeLine{71 \textcolor{keywordtype}{void} ws2812\_setleds\_rgbw(\textcolor{keyword}{struct} \mbox{\hyperlink{structc_r_g_b_w}{cRGBW}} *ledarray, uint16\_t number\_of\_leds);}
+\DoxyCodeLine{72 }
+\DoxyCodeLine{73 \textcolor{comment}{/* }}
+\DoxyCodeLine{74 \textcolor{comment}{ * Old interface / Internal functions}}
+\DoxyCodeLine{75 \textcolor{comment}{ *}}
+\DoxyCodeLine{76 \textcolor{comment}{ * The functions take a byte-\/array and send to the data output as WS2812 bitstream.}}
+\DoxyCodeLine{77 \textcolor{comment}{ * The length is the number of bytes to send -\/ three per LED.}}
+\DoxyCodeLine{78 \textcolor{comment}{ */}}
+\DoxyCodeLine{79 }
+\DoxyCodeLine{80 \textcolor{keywordtype}{void} ws2812\_sendarray     (uint8\_t *array,uint16\_t length);}
+\DoxyCodeLine{81 \textcolor{keywordtype}{void} ws2812\_sendarray\_mask(uint8\_t *array,uint16\_t length, uint8\_t pinmask);}
+\DoxyCodeLine{82 }
+\DoxyCodeLine{83 }
+\DoxyCodeLine{84 \textcolor{comment}{/*}}
+\DoxyCodeLine{85 \textcolor{comment}{ * Internal defines}}
+\DoxyCodeLine{86 \textcolor{comment}{ */}}
+\DoxyCodeLine{87 \textcolor{preprocessor}{\#if !defined(CONCAT)}}
+\DoxyCodeLine{88 \textcolor{preprocessor}{\#define CONCAT(a, b)            a \#\# b}}
+\DoxyCodeLine{89 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{90 }
+\DoxyCodeLine{91 \textcolor{preprocessor}{\#if !defined(CONCAT\_EXP)}}
+\DoxyCodeLine{92 \textcolor{preprocessor}{\#define CONCAT\_EXP(a, b)   CONCAT(a, b)}}
+\DoxyCodeLine{93 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{94 }
+\DoxyCodeLine{95 \textcolor{preprocessor}{\#define ws2812\_PORTREG  CONCAT\_EXP(PORT,ws2812\_port)}}
+\DoxyCodeLine{96 \textcolor{preprocessor}{\#define ws2812\_DDRREG   CONCAT\_EXP(DDR,ws2812\_port)}}
+\DoxyCodeLine{97 }
+\DoxyCodeLine{98 \textcolor{preprocessor}{\#endif }\textcolor{comment}{/* LIGHT\_WS2812\_H\_ */}\textcolor{preprocessor}{}}
+
+\end{DoxyCode}

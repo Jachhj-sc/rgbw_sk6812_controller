@@ -35,13 +35,17 @@ LINKER_SCRIPT_DEP:=
 SUBDIRS :=  \
 ../ledstrip_lib \
 ../ledcontrol \
-../buttons
+../buttons \
+../knob \
+../math_map
 
 
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS +=  \
 ../buttons/buttons.c \
+../knob/knob.c \
 ../ledcontrol/ledcontrol.c \
+../math_map/math_map.c \
 ../timer.c \
 ../ledstrip_lib/light_ws2812.c \
 ../main.c
@@ -55,28 +59,36 @@ ASM_SRCS +=
 
 OBJS +=  \
 buttons/buttons.o \
+knob/knob.o \
 ledcontrol/ledcontrol.o \
+math_map/math_map.o \
 timer.o \
 ledstrip_lib/light_ws2812.o \
 main.o
 
 OBJS_AS_ARGS +=  \
 buttons/buttons.o \
+knob/knob.o \
 ledcontrol/ledcontrol.o \
+math_map/math_map.o \
 timer.o \
 ledstrip_lib/light_ws2812.o \
 main.o
 
 C_DEPS +=  \
 buttons/buttons.d \
+knob/knob.d \
 ledcontrol/ledcontrol.d \
+math_map/math_map.d \
 timer.d \
 ledstrip_lib/light_ws2812.d \
 main.d
 
 C_DEPS_AS_ARGS +=  \
 buttons/buttons.d \
+knob/knob.d \
 ledcontrol/ledcontrol.d \
+math_map/math_map.d \
 timer.d \
 ledstrip_lib/light_ws2812.d \
 main.d
@@ -102,7 +114,21 @@ buttons/buttons.o: ../buttons/buttons.c
 	@echo Finished building: $<
 	
 
+knob/knob.o: ../knob/knob.c
+	@echo Building file: $<
+	@echo Invoking: AVR/GNU C Compiler : 5.4.0
+	$(QUOTE)C:\Program Files (x86)\Atmel\Studio\7.0\toolchain\avr8\avr8-gnu-toolchain\bin\avr-gcc.exe$(QUOTE)  -x c -funsigned-char -funsigned-bitfields -DDEBUG  -I"C:\Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.6.364\include"  -O3 -ffunction-sections -fdata-sections -fshort-enums -g2 -Wall -mmcu=atmega328p -B "C:\Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.6.364\gcc\dev\atmega328p" -c -std=gnu99 -MD -MP -MF "$(@:%.o=%.d)" -MT"$(@:%.o=%.d)" -MT"$(@:%.o=%.o)"   -o "$@" "$<" 
+	@echo Finished building: $<
+	
+
 ledcontrol/ledcontrol.o: ../ledcontrol/ledcontrol.c
+	@echo Building file: $<
+	@echo Invoking: AVR/GNU C Compiler : 5.4.0
+	$(QUOTE)C:\Program Files (x86)\Atmel\Studio\7.0\toolchain\avr8\avr8-gnu-toolchain\bin\avr-gcc.exe$(QUOTE)  -x c -funsigned-char -funsigned-bitfields -DDEBUG  -I"C:\Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.6.364\include"  -O3 -ffunction-sections -fdata-sections -fshort-enums -g2 -Wall -mmcu=atmega328p -B "C:\Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.6.364\gcc\dev\atmega328p" -c -std=gnu99 -MD -MP -MF "$(@:%.o=%.d)" -MT"$(@:%.o=%.d)" -MT"$(@:%.o=%.o)"   -o "$@" "$<" 
+	@echo Finished building: $<
+	
+
+math_map/math_map.o: ../math_map/math_map.c
 	@echo Building file: $<
 	@echo Invoking: AVR/GNU C Compiler : 5.4.0
 	$(QUOTE)C:\Program Files (x86)\Atmel\Studio\7.0\toolchain\avr8\avr8-gnu-toolchain\bin\avr-gcc.exe$(QUOTE)  -x c -funsigned-char -funsigned-bitfields -DDEBUG  -I"C:\Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.6.364\include"  -O3 -ffunction-sections -fdata-sections -fshort-enums -g2 -Wall -mmcu=atmega328p -B "C:\Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.6.364\gcc\dev\atmega328p" -c -std=gnu99 -MD -MP -MF "$(@:%.o=%.d)" -MT"$(@:%.o=%.d)" -MT"$(@:%.o=%.o)"   -o "$@" "$<" 
