@@ -5,6 +5,7 @@
  *  Author: william
  */ 
 #include "math_map.h"
+#include <stdint.h>
 
 int mapi(int value, int fromLow, int fromHigh, int toLow, int toHigh){
 	//this function maps a value with a certain range to another range perspectively
@@ -24,10 +25,9 @@ int mapi(int value, int fromLow, int fromHigh, int toLow, int toHigh){
 }
 
 
-
-unsigned int mapui(unsigned int value, unsigned int fromLow, unsigned int fromHigh, unsigned int toLow, unsigned int toHigh){
+uint16_t mapui(uint16_t value, uint16_t fromLow, uint16_t fromHigh, uint16_t toLow, uint16_t toHigh){
 	//this function maps a value with a certain range to another range perspectively
-	float result;
+	uint32_t result;
 	if (value > fromHigh){
 		value = fromHigh;
 	}
@@ -35,9 +35,7 @@ unsigned int mapui(unsigned int value, unsigned int fromLow, unsigned int fromHi
 		value = fromLow;
 	}
 	
-	result = (float)(toHigh-toLow);
-	result = result *  (((float)value-(float)fromLow) / ((float)fromHigh-(float)fromLow));
-	result += (float)toLow;
+	result = ((value - fromLow) * (toHigh - toLow)) / (fromHigh-fromLow);
 	
-	return (unsigned int)result;
+	return (uint16_t)result;
 }
