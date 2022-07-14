@@ -4,3 +4,4 @@
 **/*.componentinfo.xml
 **/*.cproj
 **/*.atsln
+**/doxygen
