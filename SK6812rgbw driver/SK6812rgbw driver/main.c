@@ -156,9 +156,9 @@ int main(void)
 		
 		//check adc need update later
 		knob_pos = knob_getPos(KNOB0_SHIFT);
-		//mapui(knob_pos, 0, 1024, 0 , 65535);
+		mapui(knob_pos, 0, 1024, 0 , 65535);
 		
-		systemstate_f.current_color32 = ColorHSV((uint16_t)knob_pos*64, 255, 255, 0);
+		systemstate_f.current_color32 = ColorHSV((uint16_t)knob_pos, 255, 255, 0);
 				
 		//state
 		systemstate_f.currentstate = systemstate_f.nextstate; //update currrentstate 

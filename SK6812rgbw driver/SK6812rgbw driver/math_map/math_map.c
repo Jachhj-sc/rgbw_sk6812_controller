@@ -38,4 +38,4 @@ uint16_t mapui(uint16_t value, uint16_t fromLow, uint16_t fromHigh, uint16_t toL
 	result = ((value - fromLow) * (toHigh - toLow)) / (fromHigh-fromLow);
 	
 	return (uint16_t)result;
-}
+} 
