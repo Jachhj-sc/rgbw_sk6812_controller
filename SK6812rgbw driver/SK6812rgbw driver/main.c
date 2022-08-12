@@ -91,6 +91,7 @@ typedef enum
 typedef enum
 {
 	EF_NO = 0			,
+	EF_HUEKNOB			,
 	EF_snake_nb			,
 	EF_snakeBounce_nb   ,
 	EF_snakeGrowHue_nb  ,
@@ -139,27 +140,25 @@ int main(void)
 	
 	//setRGBW_all(color32(255,255,0,0));
 	//RGBW_send();
-	uint16_t knob_pos;
+
 	uint16_t hue = 0;
 	static	uint8_t	 i = 0;
 	static  uint8_t  f = 0;
 
 	sei();//enable interrupts
 	
-	systemstate_f.current_color32 = color32(255, 255, 230, 100);
+
+#define default_COLOR color32(255, 255, 230, 100)
+
+	systemstate_f.current_color32 = default_COLOR;
+	
 	
 	while(1)
 	{
 /************************************************************************/
 /* control part that needs to be integrated in real system later		*/
 /************************************************************************/
-		
-		//check adc need update later
-		knob_pos = knob_getPos(KNOB0_SHIFT);
-		mapui(knob_pos, 0, 1024, 0 , 65535);
-		
-		systemstate_f.current_color32 = ColorHSV((uint16_t)knob_pos, 255, 255, 0);
-				
+
 		//state
 		systemstate_f.currentstate = systemstate_f.nextstate; //update currrentstate 
 		update();
@@ -213,11 +212,15 @@ event_e update(){
 		buttonflag.button1 = 0;
 	}
 	if(buttonflag.button2){
-
+// 		systemstate_f.strip_on = 1;
+// 		systemstate_f.currentstate = S_EFFECT_ON;
+// 		systemstate_f.current_ef = EF_NO;
 		buttonflag.button2 = 0;
 	}
 }
 
+
+uint16_t knob_pos;
 state_e state_act(state_e state, event_e eventn){
 	state_e nxtstate = 0;
 	
@@ -242,6 +245,20 @@ state_e state_act(state_e state, event_e eventn){
 /* add test code										                */
 /************************************************************************/		
 			case EF_NO:
+			    setRGBW_all(default_COLOR);
+				RGBW_send();
+				break;
+			
+			case EF_HUEKNOB:
+				//check adc need update later
+				
+						
+				knob_pos = knob_getPos(KNOB0_SHIFT);
+									
+				knob_pos = mapui(knob_pos, 0, 950, 0, 65534);
+					
+				systemstate_f.current_color32 = ColorHSV((uint16_t)knob_pos, 255, 255, 0);
+					
 				setRGBW_all(systemstate_f.current_color32);
 				RGBW_send();
 				break;

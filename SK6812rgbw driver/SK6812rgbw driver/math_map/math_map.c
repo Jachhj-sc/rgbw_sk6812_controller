@@ -24,7 +24,10 @@ int mapi(int value, int fromLow, int fromHigh, int toLow, int toHigh){
 
 uint16_t mapui(uint16_t value, uint16_t fromLow, uint16_t fromHigh, uint16_t toLow, uint16_t toHigh){
 	//this function maps a value with a certain range to another range perspectively
-	uint32_t result;
+	volatile uint32_t result = 0;
+	volatile float ratio; //
+	
+	//make sure the boundaries are not crossed.
 	if (value > fromHigh){
 		value = fromHigh;
 	}
@@ -32,7 +35,18 @@ uint16_t mapui(uint16_t value, uint16_t fromLow, uint16_t fromHigh, uint16_t toL
 		value = fromLow;
 	}
 	
-	result = ((((value - fromLow) * (toHigh - toLow))) / (fromHigh-fromLow));
+	//zero values
+	value = value - fromLow;
+	fromHigh = fromHigh - fromLow;
+	
+	toHigh = toHigh - fromLow;
+	
+	//calculate ratio
+	ratio = (float)((float)value / (float)fromHigh);
+	
+	result = (uint16_t)(ratio * toHigh);
+	result = result + toLow;
+	
 	
 	return (uint16_t)result;
 } 
