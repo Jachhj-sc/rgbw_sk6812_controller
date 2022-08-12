@@ -8,9 +8,11 @@
 
 #ifndef MATH_MAP_H_
 #define MATH_MAP_H_
+#include <stdint.h>
 
 int mapi(int value, int fromLow, int fromHigh, int toLow, int toHigh);
-unsigned int mapui(unsigned int value, unsigned int fromLow, unsigned int fromHigh, unsigned int toLow, unsigned int toHigh);
+
+uint16_t mapui(uint16_t value, uint16_t fromLow, uint16_t fromHigh, uint16_t toLow, uint16_t toHigh);
 
 
 #endif /* MATH_MAP_H_ */
