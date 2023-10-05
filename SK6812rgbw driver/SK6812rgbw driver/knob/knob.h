@@ -10,13 +10,13 @@
 #define KNOB_H_
 #include <stdint.h>
 
-#define KNOB0_SHIFT PINC3
+#define KNOB0_SHIFT PINC3 //A3
 #define KNOB0_MASK (1<<KNOB0_SHIFT)
 #define KNOB0_PORT PORTC
 #define KNOB0_DDR DDRC
 #define KNOB0_PIN PINC
 
-#define KNOB1_SHIFT PINC4
+#define KNOB1_SHIFT PINC4 //A4
 #define KNOB1_MASK (1<<KNOB1_SHIFT)
 #define KNOB1_PORT PORTC
 #define KNOB1_DDR DDRC

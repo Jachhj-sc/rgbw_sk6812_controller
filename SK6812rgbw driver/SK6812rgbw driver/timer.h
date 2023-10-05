@@ -10,6 +10,6 @@
 #define TIMER_H_
 
 void init_timer0(void);
-uint16_t Get_time_ms(void);
+uint32_t Get_time_ms(void);
 
 #endif /* TIMER_H_ */

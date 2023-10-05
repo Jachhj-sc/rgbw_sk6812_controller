@@ -24,7 +24,14 @@ TODO: implement delay with the build timer in timer.h in the function "effect_pu
 
 
 */
+
+
+/*use this define in project setup to determine for what board to compile for*/
+#undef Nastuus
+#define HOME
+
 #define F_CPU 16000000UL
+
 #include <util/delay.h>
 #include <avr/io.h>
 #include <stdlib.h>
@@ -32,11 +39,14 @@ TODO: implement delay with the build timer in timer.h in the function "effect_pu
 
 #include "ledcontrol/ledcontrol.h"
 #include "ws2812_config.h" // config data for the led strip
-#include "ledcontrol/colors.h"
 #include "timer.h"
 #include "buttons/buttons.h"
 #include "knob/knob.h"
 #include "math_map/math_map.h"
+
+
+#define default_COLOR color32(255, 255, 230, 100)
+
 
 int randomrange(int lower, int upper);
 void recursiveFlowHue(int colorLength, int hueSpeedPMS);
@@ -64,8 +74,6 @@ uint32_t colors[20] = {
 	COLOR_PURPLE,     
 };
 
-
-
 /************************************************************************/
 /* Control part setup													*/
 /************************************************************************/
@@ -77,9 +85,11 @@ typedef enum
 	S_EQ_ON,
 	S_ALL_ON,
 	S_EFFECT_ON,
-	S_ledERR
+	S_ledERR,
+	S_HALT
 } state_e;
 
+//not used
 typedef enum
 {
 	E_NO = 0,
@@ -111,47 +121,50 @@ typedef enum
 typedef struct
 {
 	uint8_t strip_on;
-	effect_e current_ef;
+	effect_e currentEffect;
 	uint32_t current_color32;
-	state_e currentstate;
-	state_e nextstate;
-	event_e currentevent;
-} sys_statusflags_t;
+	state_e currentState;
+	state_e nextState;
+	event_e currentEvent;
+	uint8_t updateStrip;
+	uint16_t prevStateAndPrevEffect;
+} sys_status_t;
 
-sys_statusflags_t systemstate_f = {0};
+sys_status_t systemStatusHandler = {0};
 
-
-event_e update();
+void update();
 state_e state_act(state_e state, event_e eventn);
 
 int main(void)
 {	
-	systemstate_f.currentstate = S_INIT;
-	systemstate_f.nextstate = S_ledOFF;
+	systemStatusHandler.currentState = S_INIT;
+	systemStatusHandler.nextState = S_EFFECT_ON;
+	systemStatusHandler.currentEffect = EF_NO;
+	
+	buttonFlag.button0 = 0;
+	buttonFlag.button1 = 0;
+	buttonFlag.button2 = 0;
 	
 	init_timer0();
-	setRGBW_ExBounds(0, 36);
-	//setRGBW_ExBounds(12,30);
-	setRGBW_Brightness(255);
+	
+
 	setRGBW_clear();
-	RGBW_send();
+	RGBW_send();	
+	setRGBW_ExBounds(0, 36);
+	
 	buttons_init();
 	knob_init();
-	
-	//setRGBW_all(color32(255,255,0,0));
-	//RGBW_send();
 
-	uint16_t hue = 0;
-	static	uint8_t	 i = 0;
-	static  uint8_t  f = 0;
 
 	sei();//enable interrupts
 	
-
-#define default_COLOR color32(255, 255, 230, 100)
-
-	systemstate_f.current_color32 = default_COLOR;
-	
+	DDRB |= (1<<PINB5);
+	PORTB &= ~(1<<PINB5);
+		
+	uint16_t knob1_pos;
+	knob1_pos = knob_getPos(KNOB1_SHIFT);
+	knob1_pos = (uint16_t)mapi(knob1_pos, 0, 1024, 255, 0);
+	setRGBW_Brightness(knob1_pos);
 	
 	while(1)
 	{
@@ -159,16 +172,23 @@ int main(void)
 /* control part that needs to be integrated in real system later		*/
 /************************************************************************/
 
-		//state
-		systemstate_f.currentstate = systemstate_f.nextstate; //update currrentstate 
+		systemStatusHandler.currentState = systemStatusHandler.nextState; //update currrentstate 
 		update();
-		systemstate_f.nextstate = state_act(systemstate_f.currentstate, systemstate_f.currentevent);//do actions
+		systemStatusHandler.nextState = state_act(systemStatusHandler.currentState, systemStatusHandler.currentEvent);//do actions
 		
 /************************************************************************/
 /* end of control														*/
 /************************************************************************/
 		
 	//debug purposes
+	
+////# DEBUG
+// 		//state
+// 		if(systemstate_f.strip_on == 1){
+// 			PORTB |= (1<<PINB5);
+// 		}else{
+// 			PORTB &= ~(1<<PINB5);
+// 		}
 // 		RGBW_send();
 		
 // 		effect_snake_nb(5, color32(2,2,2,2));
@@ -195,131 +215,150 @@ int main(void)
 /************************************************************************/
 /* control part that needs to be integrated in real system later		*/
 /************************************************************************/
-event_e update(){
-	if(buttonflag.button0){
-		systemstate_f.strip_on ^= 1;		
-		systemstate_f.currentstate = S_EFFECT_ON;
-		systemstate_f.current_ef = EF_NO;
-		buttonflag.button0 = 0;
+void update(){
+	if(buttonFlag.button0){
+		systemStatusHandler.strip_on ^= 1;		
+		systemStatusHandler.currentState = S_EFFECT_ON;
+		systemStatusHandler.currentEffect = EF_NO;
+		systemStatusHandler.updateStrip = 1;
+		buttonFlag.button0 = 0;
 	}
-	if(buttonflag.button1){
-		systemstate_f.strip_on = 1;
-		systemstate_f.currentstate = S_EFFECT_ON;
+	if(buttonFlag.button1){
+		systemStatusHandler.strip_on = 1;
+		systemStatusHandler.currentState = S_EFFECT_ON;
+
+		if(systemStatusHandler.currentEffect < EF_amountn) systemStatusHandler.currentEffect += 1;//go through the list of effects
+		else systemStatusHandler.currentEffect = 0;
 		
-		if(systemstate_f.current_ef < EF_amountn) systemstate_f.current_ef += 1;//go through the list of effects
-		else systemstate_f.current_ef = 0;
+		systemStatusHandler.updateStrip = 1;
+		buttonFlag.button1 = 0;
+	}
+	if(buttonFlag.button2){
+		uint16_t knob1_pos;
+		knob1_pos = knob_getPos(KNOB1_SHIFT);
+		knob1_pos = (uint16_t)mapi(knob1_pos, 0, 1024, 255, 0);
+		setRGBW_Brightness(knob1_pos);
 		
-		buttonflag.button1 = 0;
+		systemStatusHandler.updateStrip = 1;
+		buttonFlag.button2 = 0;
 	}
-	if(buttonflag.button2){
-// 		systemstate_f.strip_on = 1;
-// 		systemstate_f.currentstate = S_EFFECT_ON;
-// 		systemstate_f.current_ef = EF_NO;
-		buttonflag.button2 = 0;
-	}
+
 }
 
 
-uint16_t knob_pos;
+
 state_e state_act(state_e state, event_e eventn){
-	state_e nxtstate = 0;
+	state_e _nextState = 0;
+	uint16_t knob_pos;
 	
-	if (!systemstate_f.strip_on) state = nxtstate = S_ledOFF;
+	if (!systemStatusHandler.strip_on) state = _nextState = S_ledOFF;
 	
 	switch(state){
-	case S_ledOFF:
-		setRGBW_clear();
-		RGBW_send();
-		if (systemstate_f.strip_on) nxtstate = S_EFFECT_ON;
-		else nxtstate = S_ledOFF;
-		break;
-		
-	case S_EQ_ON:
-	//eq code
-		nxtstate = S_EQ_ON;
-		break;
-		
-	case S_EFFECT_ON:	//effect types
-		switch (systemstate_f.current_ef){
-/************************************************************************/
-/* add test code										                */
-/************************************************************************/		
-			case EF_NO:
-			    setRGBW_all(default_COLOR);
+		case S_ledOFF:
+			if (systemStatusHandler.updateStrip){
+				systemStatusHandler.updateStrip = 0;
+				setRGBW_clear();
 				RGBW_send();
-				break;
-			
-			case EF_HUEKNOB:
-				//check adc need update later
-				
-						
-				knob_pos = knob_getPos(KNOB0_SHIFT);
-									
-				knob_pos = mapui(knob_pos, 0, 950, 0, 65534);
-					
-				systemstate_f.current_color32 = ColorHSV((uint16_t)knob_pos, 255, 255, 0);
-					
-				setRGBW_all(systemstate_f.current_color32);
-				RGBW_send();
-				break;
-/************************************************************************/
-/* end test code										                */
-/************************************************************************/
-			case EF_snake_nb:
-				effect_snake_nb(10, systemstate_f.current_color32);
-				break;
+			}
 
-			case EF_snakeBounce_b:
-				effect_snakeBounce_b(10, systemstate_f.current_color32);
-				break;
+			if (systemStatusHandler.strip_on) _nextState = S_EFFECT_ON;
+			else _nextState = S_ledOFF;
+			break;
+		
+		case S_EQ_ON:
+		//eq code
+			_nextState = S_EQ_ON;
+			break;
+		
+		case S_EFFECT_ON:	//effect types
+			switch (systemStatusHandler.currentEffect){
+	/************************************************************************/
+	/* add test code										                */
+	/************************************************************************/		
+				case EF_NO:
+					if (systemStatusHandler.updateStrip){
+						systemStatusHandler.updateStrip = 0;
+						setRGBW_all(default_COLOR);
+						RGBW_send();
+					}
+					break;
 			
-			case EF_snakeBounce_nb:
-				effect_snakeBounce_nb(70, systemstate_f.current_color32);
-				break;
+				case EF_HUEKNOB:
+					knob_pos = knob_getPos(KNOB0_SHIFT);
+					knob_pos = (uint16_t)mapi(knob_pos, 0, 1024, 0, 65534);
+
+					systemStatusHandler.current_color32 = ColorHSV((uint16_t)knob_pos, 255, 255, 0);
+					
+					setRGBW_all(systemStatusHandler.current_color32);
+					RGBW_send();
+					break;
+	/************************************************************************/
+	/* end test code										                */
+	/************************************************************************/
+				case EF_snake_nb:
+					effect_snake_nb(10, systemStatusHandler.current_color32);
+					break;
+
+				case EF_snakeBounce_b:
+					effect_snakeBounce_b(10, systemStatusHandler.current_color32);
+					break;
 			
-			case EF_chase_b:
-				effect_chase_b(systemstate_f.current_color32);
-				break;
+				case EF_snakeBounce_nb:
+					effect_snakeBounce_nb(70, systemStatusHandler.current_color32);
+					break;
 			
-			case EF_snakeGrowHue_b:
-				effect_snakeGrowHue_b(5,5);
-				break;
+				case EF_chase_b:
+					effect_chase_b(systemStatusHandler.current_color32);
+					break;
 			
-			case EF_snakeGrowHue_nb:
-				effect_snakeGrowHue_nb(5,50);
-				break;
+				case EF_snakeGrowHue_b:
+					effect_snakeGrowHue_b(5,5);
+					break;
 			
-			case EF_snakeGrow_b:
-				effect_snakeGrow_b(10, systemstate_f.current_color32);
-				break;
+				case EF_snakeGrowHue_nb:
+					effect_snakeGrowHue_nb(5,50);
+					break;
 			
-			case EF_snakeGrow_nb:
-				effect_snakeGrow_nb(10, systemstate_f.current_color32);
-				break;
+				case EF_snakeGrow_b:
+					effect_snakeGrow_b(10, systemStatusHandler.current_color32);
+					break;
 			
-			case EF_pulse_b:
-				effect_pulse_b(10, 255, systemstate_f.current_color32);
-				break;
-		}
-		nxtstate = S_EFFECT_ON;
+				case EF_snakeGrow_nb:
+					effect_snakeGrow_nb(10, systemStatusHandler.current_color32);
+					break;
+			
+				case EF_pulse_b:
+					effect_pulse_b(10, 255, systemStatusHandler.current_color32);
+					break;
+				
+				case EF_amountn:
+				default:
+					_nextState = S_ledERR;
+					break;
+			}
+			_nextState = S_EFFECT_ON;
+			break;
+	
+		case S_ledERR:
+		//effect code
+			setRGBW_all(0);
+			RGBW_send();
+		
+			_nextState = S_HALT;
+			break;
+	
+		case S_HALT:
+			while(1);
+			_nextState = S_HALT;
 		break;
 	
-	case S_ledERR:
-	//effect code
-		setRGBW_all(color32(10,0,0,0));
-		RGBW_send();
-		nxtstate = S_ledERR;
-		break;
-	
-	default:
-	//error
-		nxtstate = S_ledERR;
-		break;
+		default:
+		//error
+			_nextState = S_ledERR;
+			break;
 	}
 	
-
-
-	return nxtstate;
+	return _nextState;
 }
 
 /************************************************************************/
@@ -347,27 +386,27 @@ int randomrange(int lower, int upper){
 void recursiveFlowHue(int colorLength, int hueSpeedPMS) {
 	static uint16_t hue = 0;
 		
-	for (int i = 0; i < LEDpixelcount + colorLength; i++) {
-		if (i <= LEDpixelcount)
+	for (int i = 0; i < LEDPIXELCOUNT + colorLength; i++) {
+		if (i <= LEDPIXELCOUNT)
+			setRGBW_pixel(i, gamma32(ColorHSV(hue += hueSpeedPMS * (DELAY+14), 255,255,0)));
 		//doe huespeed * delayy zodat het hue speed getal per milliseconden is en niet
 		//afhankelijk is van de snelheid van de strip dus als je strip sneller gaat
 		//gaat de kleurverandering niet sneller.
 		
-		setRGBW_pixel(i, gamma32(ColorHSV(hue += hueSpeedPMS * (DELAY+14), 255,255,0)));
 		if (i - colorLength >= 0)
-		setRGBW_pixel(i - colorLength, color32(0, 0, 0, 0));
+			setRGBW_pixel(i - colorLength, color32(0, 0, 0, 0));
 
 		RGBW_send();
 		_delay_ms(DELAY);
 	}
 
-	for (int i = LEDpixelcount; i > 0 - colorLength;i--) {
+	for (int i = LEDPIXELCOUNT; i > 0 - colorLength;i--) {
 
 
 		if (i >= 0)
 		setRGBW_pixel(i, gamma32(ColorHSV(hue += hueSpeedPMS * (DELAY+14),255,255,0)));
 
-		if (i + colorLength <= LEDpixelcount)
+		if (i + colorLength <= LEDPIXELCOUNT)
 		setRGBW_pixel(i + colorLength, color32(0, 0, 0, 0));
 
 		RGBW_send();

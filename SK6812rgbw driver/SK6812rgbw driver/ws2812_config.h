@@ -18,6 +18,6 @@
 #define ws2812_port C   // Data port
 #define ws2812_pin  5   // Data out pin
 
-#define LEDpixelcount 180/*46*/
+#define LEDPIXELCOUNT 180/*46*/
 
 #endif /* WS2812_CONFIG_H_ */

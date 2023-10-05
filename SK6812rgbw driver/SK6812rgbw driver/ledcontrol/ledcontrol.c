@@ -9,8 +9,6 @@
 max update speed ledstrip = x ms per frame & x fps
 */
 
-#define F_CPU 16000000UL
-
 #include <avr/io.h>
 #include <avr/pgmspace.h>
 #include <util/delay.h>
@@ -74,10 +72,10 @@ static const uint8_t _NeoPixelGammaTable[256] PROGMEM = {
   218,220,223,225,227,230,232,235,237,240,242,245,247,250,252,255};
   
   
-  
-  
+uint32_t ledPixelCount = 0;//?
+
 //data for ledstrip
-struct cRGBW led[LEDpixelcount+1];//array that holds pixel values
+struct cRGBW led[LEDPIXELCOUNT+1];//array that holds pixel values
 uint8_t brightness = 255;
 
 //exclusion boundaries
@@ -107,7 +105,7 @@ void setRGBW_ExBounds(uint16_t low, uint16_t high){
 }
 
 void setRGBW_all(uint32_t color){
-	for (int i = 0; i < LEDpixelcount; i++)
+	for (int i = 0; i < LEDPIXELCOUNT; i++)
 	{
 		setRGBW_pixel(i, color);
 	}
@@ -141,7 +139,7 @@ void calcBrightness(uint32_t *color, uint8_t _brightness){
 }
 
 void RGBW_send(){
-		ws2812_setleds_rgbw(led, LEDpixelcount);//send the frame with size of pixelcount to update the strip
+		ws2812_setleds_rgbw(led, LEDPIXELCOUNT);//send the frame with size of pixelcount to update the strip
 }
 
 /*!
@@ -262,8 +260,8 @@ void effect_snakeGrow_nb(int growSpd, uint32_t color){
 	static int len = 1;
 	static int f = 0;
 
-	if (len < LEDpixelcount){
-		if (f < LEDpixelcount){
+	if (len < LEDPIXELCOUNT){
+		if (f < LEDPIXELCOUNT){
 			effect_snake_nb(len, color);
 			f++;
 		}
@@ -279,8 +277,8 @@ void effect_snakeGrow_nb(int growSpd, uint32_t color){
 }
 
 void effect_snakeGrow_b(int growSpd, uint32_t color){
-	for(int len = 1; len < LEDpixelcount; len+=growSpd){
-		for (int f = 0; f < LEDpixelcount; f++){//finish full animation frame
+	for(int len = 1; len < LEDPIXELCOUNT; len+=growSpd){
+		for (int f = 0; f < LEDPIXELCOUNT; f++){//finish full animation frame
 			effect_snake_nb(len, color);
 		}
 	}
@@ -306,14 +304,14 @@ void effect_snake_nb(int length, uint32_t color){ // make a circulating snake
 	setRGBW_pixel(tail, 0);
 	}
 	tail++;
-	if(tail >= LEDpixelcount){//loop for tail
+	if(tail >= LEDPIXELCOUNT){//loop for tail
 		tail = 0;
 	}
 	
 	setRGBW_pixel(head, color);
 	
 	head++;
-	if(head >= LEDpixelcount){//loop for head
+	if(head >= LEDPIXELCOUNT){//loop for head
 		head = 0;
 	}
 
@@ -323,7 +321,7 @@ void effect_snake_nb(int length, uint32_t color){ // make a circulating snake
 
 void effect_snakeBounce_b(int length, uint32_t color){ // make a bouncing snake
 		int tail = 0;
-		for(int i = 0; i < LEDpixelcount; i++){
+		for(int i = 0; i < LEDPIXELCOUNT; i++){
 			setRGBW_pixel(i, color);
 			tail = i - length;
 			if (tail < 0){
@@ -332,11 +330,11 @@ void effect_snakeBounce_b(int length, uint32_t color){ // make a bouncing snake
 			setRGBW_pixel(tail, 0);
 			RGBW_send();
 		}
-		for(int i = LEDpixelcount-1; i >= 0; i--){
+		for(int i = LEDPIXELCOUNT-1; i >= 0; i--){
 			setRGBW_pixel(i, color);
 			tail = i + length;
-			if (tail > LEDpixelcount-1){
-				tail = LEDpixelcount-1;
+			if (tail > LEDPIXELCOUNT-1){
+				tail = LEDPIXELCOUNT-1;
 			}
 			setRGBW_pixel(tail, 0);
 			RGBW_send();
@@ -348,7 +346,7 @@ void effect_snakeBounce_nb(int length, uint32_t color){ // make a bouncing snake
 	static int i = 0;
 	static _Bool reverse = 0;
 	
-	if (i<LEDpixelcount && !reverse){
+	if (i<LEDPIXELCOUNT && !reverse){
 		setRGBW_pixel(i, color);
 		tail = i - length;
 		if (tail < 0){
@@ -364,8 +362,8 @@ void effect_snakeBounce_nb(int length, uint32_t color){ // make a bouncing snake
 	if (i > 0 && reverse){
 		setRGBW_pixel(i, color);
 		tail = i + length;
-		if (tail > LEDpixelcount-1){
-			tail = LEDpixelcount-1;
+		if (tail > LEDPIXELCOUNT-1){
+			tail = LEDPIXELCOUNT-1;
 		}
 		setRGBW_pixel(tail, 0);
 		RGBW_send();
@@ -377,11 +375,11 @@ void effect_snakeBounce_nb(int length, uint32_t color){ // make a bouncing snake
 
 }
 void effect_chase_b(uint32_t color){
-	for(int i = 0; i <= LEDpixelcount; i++){
+	for(int i = 0; i <= LEDPIXELCOUNT; i++){
 		setRGBW_pixel(i, color);
 		RGBW_send();
 	}
-	for(int i = 0; i <= LEDpixelcount; i++){
+	for(int i = 0; i <= LEDPIXELCOUNT; i++){
 		setRGBW_pixel(i, 0);
 		RGBW_send();
 	}
@@ -447,7 +445,7 @@ void effect_pulse_nb(int delay, int maxBrightness, uint32_t color){
 #endif
 
 void effect_travelingTwinkel(void){
-	for(int i = 0; i < LEDpixelcount; i++){//go through every color in order grbw and then succeed to the next pixel
+	for(int i = 0; i < LEDPIXELCOUNT; i++){//go through every color in order grbw and then succeed to the next pixel
 		for (int c = 1; c >= 0; c--){
 			setRGBW_pixel(i ,(((uint32_t)1 << 8*3)>> c*8));
 			RGBW_send();

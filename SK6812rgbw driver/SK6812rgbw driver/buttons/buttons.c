@@ -10,7 +10,7 @@
 #include <stdint.h>
 #include <util/delay.h>
 
-volatile sw_statusflag_t buttonflag = {0};
+volatile sw_statusflag_t buttonFlag = {0};
 
 void buttons_init(void){
 //initialize buttons
@@ -29,12 +29,12 @@ void buttons_init(void){
 ISR(PCINT1_vect){//button interrupt, and set flag for button
 	 //check which button was pressed.
 	if(!((BUT0_PIN & BUT0_MASK) == BUT0_MASK)){
-		 buttonflag.button0 = 1;//if Button on PINC0 is pressed
+		 buttonFlag.button0 = 1;//if Button on PINC0 is pressed
 	}
 	if(!((BUT1_PIN & BUT1_MASK) == BUT1_MASK)){ 
-		buttonflag.button1 = 1;
+		buttonFlag.button1 = 1;
 	}
 	if(!((BUT2_PIN & BUT2_MASK) == BUT2_MASK)){ 
-		buttonflag.button2 = 1;
+		buttonFlag.button2 = 1;
 	}
 }
