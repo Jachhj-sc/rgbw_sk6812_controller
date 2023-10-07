@@ -250,6 +250,7 @@ void update(){
 state_e state_act(state_e state, event_e eventn){
 	state_e _nextState = 0;
 	uint16_t knob_pos;
+	uint16_t knob1_pos;
 	
 	if (!systemStatusHandler.strip_on) state = _nextState = S_ledOFF;
 	
@@ -284,6 +285,10 @@ state_e state_act(state_e state, event_e eventn){
 					break;
 			
 				case EF_HUEKNOB:
+					knob1_pos = knob_getPos(KNOB1_SHIFT);
+					knob1_pos = (uint16_t)mapi(knob1_pos, 0, 1024, 255, 0);
+					setRGBW_Brightness(knob1_pos);
+				
 					knob_pos = knob_getPos(KNOB0_SHIFT);
 					knob_pos = (uint16_t)mapi(knob_pos, 0, 1024, 0, 65534);
 
