@@ -18,6 +18,9 @@
 #define ws2812_port C   // Data port
 #define ws2812_pin  5   // Data out pin
 
-#define LEDPIXELCOUNT 180/*46*/
+#define LEDPIXELCOUNT (180)/*46*/
+
+#define POT_DEADZONE (50) //10 max 1024
+#define HUEKNOB_UPDATE_DURATION (1000)//ms
 
 #endif /* WS2812_CONFIG_H_ */

@@ -18,8 +18,11 @@
 typedef struct  
 {
 	uint8_t button0;
+	uint8_t button0_prev;
 	uint8_t button1;
+	uint8_t button1_prev;
 	uint8_t button2;
+	uint8_t button2_prev;
 } sw_statusflag_t;
 
 extern volatile sw_statusflag_t buttonFlag;

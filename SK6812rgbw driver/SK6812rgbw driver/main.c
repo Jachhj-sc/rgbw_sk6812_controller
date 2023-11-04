@@ -30,7 +30,7 @@ TODO: implement delay with the build timer in timer.h in the function "effect_pu
 #undef Nastuus
 #define HOME
 
-#define F_CPU 16000000UL
+//#define F_CPU 16000000UL
 
 #include <util/delay.h>
 #include <avr/io.h>
@@ -251,9 +251,23 @@ state_e state_act(state_e state, event_e eventn){
 	state_e _nextState = 0;
 	uint16_t knob_pos;
 	uint16_t knob1_pos;
+	static uint16_t prev_knob_pos;
+	static uint16_t prev_knob1_pos;
+
+	uint32_t time_ms = Get_time_ms();
+	static uint32_t prevtimeHueKnob = 0;
 	
-	if (!systemStatusHandler.strip_on) state = _nextState = S_ledOFF;
+	static uint32_t HueKnob_ContinuousUpdateDuration = HUEKNOB_UPDATE_DURATION;
 	
+	//updating the knob values 
+	knob1_pos = knob_getPos(KNOB1_SHIFT);
+	knob_pos = knob_getPos(KNOB0_SHIFT);
+	
+	if(systemStatusHandler.strip_on == 0){
+		state = S_ledOFF;
+	}
+	
+	//run the state machine	
 	switch(state){
 		case S_ledOFF:
 			if (systemStatusHandler.updateStrip){
@@ -262,21 +276,33 @@ state_e state_act(state_e state, event_e eventn){
 				RGBW_send();
 			}
 
-			if (systemStatusHandler.strip_on) _nextState = S_EFFECT_ON;
-			else _nextState = S_ledOFF;
+			if (systemStatusHandler.strip_on){
+				 _nextState = S_EFFECT_ON;
+				 systemStatusHandler.updateStrip = 1;
+			}else{
+				 _nextState = S_ledOFF;
+			}
 			break;
 		
 		case S_EQ_ON:
-		//eq code
 			_nextState = S_EQ_ON;
+				
 			break;
 		
-		case S_EFFECT_ON:	//effect types
+		case S_EFFECT_ON:	//effect types					
 			switch (systemStatusHandler.currentEffect){
 	/************************************************************************/
 	/* add test code										                */
 	/************************************************************************/		
 				case EF_NO:
+					if(knob1_pos < prev_knob1_pos - POT_DEADZONE || knob1_pos > prev_knob1_pos + POT_DEADZONE){
+						prev_knob1_pos = knob1_pos;
+						
+						knob1_pos = (uint16_t)mapi(knob1_pos, 0, 1024, 255, 0);
+						setRGBW_Brightness(knob1_pos);
+						systemStatusHandler.updateStrip = 1;
+					}
+														
 					if (systemStatusHandler.updateStrip){
 						systemStatusHandler.updateStrip = 0;
 						setRGBW_all(default_COLOR);
@@ -285,30 +311,58 @@ state_e state_act(state_e state, event_e eventn){
 					break;
 			
 				case EF_HUEKNOB:
-					knob1_pos = knob_getPos(KNOB1_SHIFT);
-					knob1_pos = (uint16_t)mapi(knob1_pos, 0, 1024, 255, 0);
-					setRGBW_Brightness(knob1_pos);
-				
-					knob_pos = knob_getPos(KNOB0_SHIFT);
-					knob_pos = (uint16_t)mapi(knob_pos, 0, 1024, 0, 65534);
+					if(knob1_pos < prev_knob1_pos - POT_DEADZONE || knob1_pos > prev_knob1_pos + POT_DEADZONE){
+						prev_knob1_pos = knob1_pos;
+						systemStatusHandler.updateStrip = 1;
+					}															
+					if(knob_pos < prev_knob_pos - POT_DEADZONE || knob_pos > prev_knob_pos + POT_DEADZONE){
+						prev_knob_pos = knob_pos;
+						systemStatusHandler.updateStrip = 1;
+					}
+											
+					if (systemStatusHandler.updateStrip){
+						if (time_ms - prevtimeHueKnob > HueKnob_ContinuousUpdateDuration){
+							systemStatusHandler.updateStrip = 0;
+							prevtimeHueKnob = time_ms;
+						}					
 
-					systemStatusHandler.current_color32 = ColorHSV((uint16_t)knob_pos, 255, 255, 0);
-					
-					setRGBW_all(systemStatusHandler.current_color32);
-					RGBW_send();
+						//interpret the knobs for the brightness and hue
+						knob1_pos = (uint16_t)mapi(knob1_pos, 0, 1024, 255, 0);
+						setRGBW_Brightness(knob1_pos);						
+											
+						knob_pos = (uint16_t)mapi(knob_pos, 0, 1024, 0, 65534);
+						systemStatusHandler.current_color32 = ColorHSV((uint16_t)knob_pos, 255, 255, 0);
+						setRGBW_all(systemStatusHandler.current_color32);
+						
+						RGBW_send();
+					}
 					break;
 	/************************************************************************/
 	/* end test code										                */
 	/************************************************************************/
 				case EF_snake_nb:
+					//interpret the knobs for the brightness and hue
+					knob1_pos = (uint16_t)mapi(knob1_pos, 0, 1024, 255, 0);
+					setRGBW_Brightness(knob1_pos);
+					
+					knob_pos = (uint16_t)mapi(knob_pos, 0, 1024, 0, 65534);
+					systemStatusHandler.current_color32 = ColorHSV((uint16_t)knob_pos, 255, 255, 0);
+					
 					effect_snake_nb(10, systemStatusHandler.current_color32);
 					break;
 
-				case EF_snakeBounce_b:
+				case EF_snakeBounce_b:					
 					effect_snakeBounce_b(10, systemStatusHandler.current_color32);
 					break;
 			
 				case EF_snakeBounce_nb:
+					//interpret the knobs for the brightness and hue
+					knob1_pos = (uint16_t)mapi(knob1_pos, 0, 1024, 255, 0);
+					setRGBW_Brightness(knob1_pos);
+					
+					knob_pos = (uint16_t)mapi(knob_pos, 0, 1024, 0, 65534);
+					systemStatusHandler.current_color32 = ColorHSV((uint16_t)knob_pos, 255, 255, 0);
+					
 					effect_snakeBounce_nb(70, systemStatusHandler.current_color32);
 					break;
 			
@@ -320,7 +374,7 @@ state_e state_act(state_e state, event_e eventn){
 					effect_snakeGrowHue_b(5,5);
 					break;
 			
-				case EF_snakeGrowHue_nb:
+				case EF_snakeGrowHue_nb:					
 					effect_snakeGrowHue_nb(5,50);
 					break;
 			
@@ -329,6 +383,13 @@ state_e state_act(state_e state, event_e eventn){
 					break;
 			
 				case EF_snakeGrow_nb:
+					//interpret the knobs for the brightness and hue
+					knob1_pos = (uint16_t)mapi(knob1_pos, 0, 1024, 255, 0);
+					setRGBW_Brightness(knob1_pos);
+					
+					knob_pos = (uint16_t)mapi(knob_pos, 0, 1024, 0, 65534);
+					systemStatusHandler.current_color32 = ColorHSV((uint16_t)knob_pos, 255, 255, 0);
+					
 					effect_snakeGrow_nb(10, systemStatusHandler.current_color32);
 					break;
 			
@@ -337,23 +398,23 @@ state_e state_act(state_e state, event_e eventn){
 					break;
 				
 				case EF_amountn:
+					break;
 				default:
 					_nextState = S_ledERR;
 					break;
 			}
-			_nextState = S_EFFECT_ON;
 			break;
 	
 		case S_ledERR:
 		//effect code
-			setRGBW_all(0);
+			setRGBW_all(20);
 			RGBW_send();
 		
 			_nextState = S_HALT;
 			break;
 	
 		case S_HALT:
-			while(1);
+			//while(1);
 			_nextState = S_HALT;
 		break;
 	

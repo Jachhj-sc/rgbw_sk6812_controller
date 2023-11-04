@@ -27,14 +27,29 @@ void buttons_init(void){
 }
 
 ISR(PCINT1_vect){//button interrupt, and set flag for button
+	_delay_ms(40);
+
 	 //check which button was pressed.
-	if(!((BUT0_PIN & BUT0_MASK) == BUT0_MASK)){
-		 buttonFlag.button0 = 1;//if Button on PINC0 is pressed
+	if(!((BUT0_PIN & BUT0_MASK) == BUT0_MASK))
+	{
+		 buttonFlag.button0_prev = 1;//if Button on PINC0 is pressed
 	}
-	if(!((BUT1_PIN & BUT1_MASK) == BUT1_MASK)){ 
-		buttonFlag.button1 = 1;
+	else if(!((BUT1_PIN & BUT1_MASK) == BUT1_MASK))
+	{ 
+		buttonFlag.button1_prev = 1;
 	}
-	if(!((BUT2_PIN & BUT2_MASK) == BUT2_MASK)){ 
-		buttonFlag.button2 = 1;
+	else if(!((BUT2_PIN & BUT2_MASK) == BUT2_MASK))
+	{ 
+		buttonFlag.button2_prev = 1;
+	}
+	else // only set button flag when the button is released
+	{
+		//wait for 
+		buttonFlag.button0 = buttonFlag.button0_prev;
+		buttonFlag.button1 = buttonFlag.button1_prev;
+		buttonFlag.button2 = buttonFlag.button2_prev;
+		buttonFlag.button0_prev = 0;
+		buttonFlag.button1_prev = 0;
+		buttonFlag.button2_prev = 0;
 	}
 }
