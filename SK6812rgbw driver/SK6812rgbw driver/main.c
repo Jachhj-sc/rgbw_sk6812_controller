@@ -74,16 +74,21 @@ uint32_t colors[20] = {
 	COLOR_PURPLE,     
 };
 
+enum {
+	KN1F_BRIGHTNESS,
+	KN1F_WHITENESS	
+}knob1Functions;
+
 /************************************************************************/
 /* Control part setup													*/
 /************************************************************************/
 
 typedef enum
 {
-	S_INIT = 0,
-	S_ledOFF,
+	S_INIT,
 	S_EQ_ON,
 	S_ALL_ON,
+	S_ledOFF,
 	S_EFFECT_ON,
 	S_ledERR,
 	S_HALT
@@ -128,6 +133,7 @@ typedef struct
 	event_e currentEvent;
 	uint8_t updateStrip;
 	uint16_t prevStateAndPrevEffect;
+	uint8_t knob1_funcFlag;
 } sys_status_t;
 
 sys_status_t systemStatusHandler = {0};
@@ -234,11 +240,7 @@ void update(){
 		buttonFlag.button1 = 0;
 	}
 	if(buttonFlag.button2){
-		uint16_t knob1_pos;
-		knob1_pos = knob_getPos(KNOB1_SHIFT);
-		knob1_pos = (uint16_t)mapi(knob1_pos, 0, 1024, 255, 0);
-		setRGBW_Brightness(knob1_pos);
-		
+		systemStatusHandler.knob1_funcFlag ^= 1;// change from func brightness to whiteness
 		systemStatusHandler.updateStrip = 1;
 		buttonFlag.button2 = 0;
 	}
@@ -259,6 +261,8 @@ state_e state_act(state_e state, event_e eventn){
 	
 	static uint32_t HueKnob_ContinuousUpdateDuration = HUEKNOB_UPDATE_DURATION;
 	
+	static uint16_t whiteness = 0;
+	
 	//updating the knob values 
 	knob1_pos = knob_getPos(KNOB1_SHIFT);
 	knob_pos = knob_getPos(KNOB0_SHIFT);
@@ -278,6 +282,8 @@ state_e state_act(state_e state, event_e eventn){
 
 			if (systemStatusHandler.strip_on){
 				 _nextState = S_EFFECT_ON;
+				 systemStatusHandler.currentEffect = EF_NO;
+				 
 				 systemStatusHandler.updateStrip = 1;
 			}else{
 				 _nextState = S_ledOFF;
@@ -290,32 +296,49 @@ state_e state_act(state_e state, event_e eventn){
 			break;
 		
 		case S_EFFECT_ON:	//effect types					
+			_nextState = S_EFFECT_ON;
 			switch (systemStatusHandler.currentEffect){
 	/************************************************************************/
 	/* add test code										                */
 	/************************************************************************/		
 				case EF_NO:
-					if(knob1_pos < prev_knob1_pos - POT_DEADZONE || knob1_pos > prev_knob1_pos + POT_DEADZONE){
+					if(knob1_pos < prev_knob1_pos - POT_DEADZONE || knob1_pos > prev_knob1_pos + POT_DEADZONE || systemStatusHandler.updateStrip == 1){
 						prev_knob1_pos = knob1_pos;
 						
-						knob1_pos = (uint16_t)mapi(knob1_pos, 0, 1024, 255, 0);
-						setRGBW_Brightness(knob1_pos);
+						if(systemStatusHandler.knob1_funcFlag == KN1F_BRIGHTNESS){
+							knob1_pos = (uint16_t)mapi(knob1_pos, 0, 1024, 255, 0);
+							setRGBW_Brightness(knob1_pos);
+						}else if (systemStatusHandler.knob1_funcFlag == KN1F_WHITENESS){
+							whiteness = (uint16_t)mapi(knob1_pos, 0, 1024, 255, 0);
+						}
 						systemStatusHandler.updateStrip = 1;
 					}
 														
 					if (systemStatusHandler.updateStrip){
 						systemStatusHandler.updateStrip = 0;
-						setRGBW_all(default_COLOR);
+						setRGBW_all(color32(255, 255, 210, whiteness));//default_COLOR
 						RGBW_send();
 					}
 					break;
 			
 				case EF_HUEKNOB:
-					if(knob1_pos < prev_knob1_pos - POT_DEADZONE || knob1_pos > prev_knob1_pos + POT_DEADZONE){
+					if(knob1_pos < prev_knob1_pos - POT_DEADZONE || knob1_pos > prev_knob1_pos + POT_DEADZONE || systemStatusHandler.updateStrip == 1){
 						prev_knob1_pos = knob1_pos;
+						
+						if(systemStatusHandler.knob1_funcFlag == KN1F_BRIGHTNESS){
+							knob1_pos = (uint16_t)mapi(knob1_pos, 0, 1024, 255, 0);
+							setRGBW_Brightness(knob1_pos);
+						}else if (systemStatusHandler.knob1_funcFlag == KN1F_WHITENESS){
+							whiteness = (uint16_t)mapi(knob1_pos, 0, 1024, 255, 0);
+						}
+						
 						systemStatusHandler.updateStrip = 1;
-					}															
-					if(knob_pos < prev_knob_pos - POT_DEADZONE || knob_pos > prev_knob_pos + POT_DEADZONE){
+					}
+															
+					if(knob_pos < prev_knob_pos - POT_DEADZONE || knob_pos > prev_knob_pos + POT_DEADZONE || systemStatusHandler.updateStrip == 1){
+						knob_pos = (uint16_t)mapi(knob_pos, 0, 1024, 0, 65534);
+						systemStatusHandler.current_color32 = ColorHSV((uint16_t)knob_pos, 255, 255, whiteness);
+						
 						prev_knob_pos = knob_pos;
 						systemStatusHandler.updateStrip = 1;
 					}
@@ -326,12 +349,6 @@ state_e state_act(state_e state, event_e eventn){
 							prevtimeHueKnob = time_ms;
 						}					
 
-						//interpret the knobs for the brightness and hue
-						knob1_pos = (uint16_t)mapi(knob1_pos, 0, 1024, 255, 0);
-						setRGBW_Brightness(knob1_pos);						
-											
-						knob_pos = (uint16_t)mapi(knob_pos, 0, 1024, 0, 65534);
-						systemStatusHandler.current_color32 = ColorHSV((uint16_t)knob_pos, 255, 255, 0);
 						setRGBW_all(systemStatusHandler.current_color32);
 						
 						RGBW_send();
@@ -342,11 +359,15 @@ state_e state_act(state_e state, event_e eventn){
 	/************************************************************************/
 				case EF_snake_nb:
 					//interpret the knobs for the brightness and hue
-					knob1_pos = (uint16_t)mapi(knob1_pos, 0, 1024, 255, 0);
-					setRGBW_Brightness(knob1_pos);
+					if(systemStatusHandler.knob1_funcFlag == KN1F_BRIGHTNESS){
+						knob1_pos = (uint16_t)mapi(knob1_pos, 0, 1024, 255, 0);
+						setRGBW_Brightness(knob1_pos);
+					}else if (systemStatusHandler.knob1_funcFlag == KN1F_WHITENESS){
+						whiteness = (uint16_t)mapi(knob1_pos, 0, 1024, 255, 0);
+					}
 					
 					knob_pos = (uint16_t)mapi(knob_pos, 0, 1024, 0, 65534);
-					systemStatusHandler.current_color32 = ColorHSV((uint16_t)knob_pos, 255, 255, 0);
+					systemStatusHandler.current_color32 = ColorHSV((uint16_t)knob_pos, 255, 255, whiteness);
 					
 					effect_snake_nb(10, systemStatusHandler.current_color32);
 					break;
@@ -357,11 +378,15 @@ state_e state_act(state_e state, event_e eventn){
 			
 				case EF_snakeBounce_nb:
 					//interpret the knobs for the brightness and hue
-					knob1_pos = (uint16_t)mapi(knob1_pos, 0, 1024, 255, 0);
-					setRGBW_Brightness(knob1_pos);
+					if(systemStatusHandler.knob1_funcFlag == KN1F_BRIGHTNESS){
+						knob1_pos = (uint16_t)mapi(knob1_pos, 0, 1024, 255, 0);
+						setRGBW_Brightness(knob1_pos);
+					}else if (systemStatusHandler.knob1_funcFlag == KN1F_WHITENESS){
+						whiteness = (uint16_t)mapi(knob1_pos, 0, 1024, 255, 0);
+					}
 					
 					knob_pos = (uint16_t)mapi(knob_pos, 0, 1024, 0, 65534);
-					systemStatusHandler.current_color32 = ColorHSV((uint16_t)knob_pos, 255, 255, 0);
+					systemStatusHandler.current_color32 = ColorHSV((uint16_t)knob_pos, 255, 255, whiteness);
 					
 					effect_snakeBounce_nb(70, systemStatusHandler.current_color32);
 					break;
@@ -374,7 +399,13 @@ state_e state_act(state_e state, event_e eventn){
 					effect_snakeGrowHue_b(5,5);
 					break;
 			
-				case EF_snakeGrowHue_nb:					
+				case EF_snakeGrowHue_nb:
+					if(systemStatusHandler.knob1_funcFlag == KN1F_BRIGHTNESS){
+						knob1_pos = (uint16_t)mapi(knob1_pos, 0, 1024, 255, 0);
+						setRGBW_Brightness(knob1_pos);
+					}else if (systemStatusHandler.knob1_funcFlag == KN1F_WHITENESS){
+						whiteness = (uint16_t)mapi(knob1_pos, 0, 1024, 255, 0);
+					}					
 					effect_snakeGrowHue_nb(5,50);
 					break;
 			
@@ -384,11 +415,15 @@ state_e state_act(state_e state, event_e eventn){
 			
 				case EF_snakeGrow_nb:
 					//interpret the knobs for the brightness and hue
-					knob1_pos = (uint16_t)mapi(knob1_pos, 0, 1024, 255, 0);
-					setRGBW_Brightness(knob1_pos);
+					if(systemStatusHandler.knob1_funcFlag == KN1F_BRIGHTNESS){
+						knob1_pos = (uint16_t)mapi(knob1_pos, 0, 1024, 255, 0);
+						setRGBW_Brightness(knob1_pos);
+					}else if (systemStatusHandler.knob1_funcFlag == KN1F_WHITENESS){
+						whiteness = (uint16_t)mapi(knob1_pos, 0, 1024, 255, 0);
+					}
 					
 					knob_pos = (uint16_t)mapi(knob_pos, 0, 1024, 0, 65534);
-					systemStatusHandler.current_color32 = ColorHSV((uint16_t)knob_pos, 255, 255, 0);
+					systemStatusHandler.current_color32 = ColorHSV((uint16_t)knob_pos, 255, 255, whiteness);
 					
 					effect_snakeGrow_nb(10, systemStatusHandler.current_color32);
 					break;
@@ -398,7 +433,6 @@ state_e state_act(state_e state, event_e eventn){
 					break;
 				
 				case EF_amountn:
-					break;
 				default:
 					_nextState = S_ledERR;
 					break;

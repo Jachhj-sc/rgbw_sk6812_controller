@@ -27,7 +27,9 @@ void buttons_init(void){
 }
 
 ISR(PCINT1_vect){//button interrupt, and set flag for button
-	_delay_ms(40);
+	cli();
+	
+	_delay_ms(20);
 
 	 //check which button was pressed.
 	if(!((BUT0_PIN & BUT0_MASK) == BUT0_MASK))
@@ -48,8 +50,11 @@ ISR(PCINT1_vect){//button interrupt, and set flag for button
 		buttonFlag.button0 = buttonFlag.button0_prev;
 		buttonFlag.button1 = buttonFlag.button1_prev;
 		buttonFlag.button2 = buttonFlag.button2_prev;
+		
 		buttonFlag.button0_prev = 0;
 		buttonFlag.button1_prev = 0;
 		buttonFlag.button2_prev = 0;
 	}
+	
+	sei();
 }
